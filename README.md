@@ -37,6 +37,14 @@ fastclick.attach(document.body);
       }
     }
 ```
+## Vue 的内部属性
+1. 在vue内部去除回调钩子中定义数据外，其他属性中定义数据都会被检测，添加对应get,set方法
+``` 
+created(){
+      this.touch={};
+    },
+```
+
 ## better-scroll 使用
 
 ### 参考 [better-scroll](https://ustbhuangyi.github.io/better-scroll/doc/zh-hans/)
@@ -84,7 +92,6 @@ dom数据加载完成后，必须调用scroll.refresh(),重新计算高度
 ```
 
 
-
 ### 实现slider，轮播效果
 
 1. slider组件，是一个壳子，只对里面的内容增加轮播效果，模板template
@@ -125,3 +132,123 @@ this.scroll=new BScroll(this.$refs.slider,{
                     click:true
                 });
 ```
+###  better-scroll实现左右联动
+
+
+
+
+
+### better-scroll 事件
+
+#### 通过 scroll.on()绑定事件
+
+#### 1. scrollEnd 滚动结束事件，当滚动结束调用
+
+1. scroll.getCurrentPage().pageX 获取当前滚动第几页
+
+``` 
+this.scroll.on('scrollEnd',()=>{
+                    let currentPageNum=this.scroll.getCurrentPage().pageX;
+                    this.curIndex=currentPageNum;
+
+                    //每次轮播结束，清除定时器，防止和手动拖拽冲突
+                    if(this.autoPlay ){
+                        clearTimeout(this.timer);
+                        this._play();
+                    }
+                });
+
+
+```
+#### 2. scroll 事件，滚动进行中调用事件
+1. 
+``` 
+if(this.listenScroll){
+            let vue=this;
+            this.scroll.on('scroll',(pos)=>{
+                vue.$emit('scroll',pos);
+            });
+        }
+
+```
+
+
+### better-scroll 方法
+
+#### 2.  this.scroll.goToPage(pageIndex,0,400); 
+1. 跳转到X轴第几页，跳转时间400ms，这个方法主要是在slider组件中使用
+
+
+
+## 移动端布局，css实现
+
+### 1. 在解决布局高度问题时，能用css解决的，尽量用css解决
+例如：
+``` 
+<body>
+  <header>...<header/>
+  # 这一层需要实现BScroll的滚动，那么就必须设置高度，但时又要自适应所有手机
+  #高度，就不能使用在同一层
+  #错误解决方案：他们在同一层，然后用body高度- header高度 算出div高度（不可取）
+  #正确解决方案：他们不在同一层，直接将div层定位，就不需要计算body高度了
+  
+  <div>
+    ...
+  <div/>
+  
+</body>
+```
+### 2. 常用属性 
+1. min-height: 固定最小高度，防止变形
+ 
+2. @media screen (320px){
+    css代码区
+    ...
+}：
+3. 文字或者盒子  
+white-space:nowrap;//不换行
+缩略
+text-overflow: ellipsis;
+
+4. flex:0 0 50px;
+参数1：剩余空间为正时，占有比率
+参数2：剩余空间为负数时，占有比率
+参数3：在分配之前基础值多少
+         
+## ES6使用
+
+### 对象的使用
+1. constructor()构造函数，es6允许对象写成{item,item}形式
+2. 在js中函数，方法，对象传参尽量使用对象形式{key:val},方便阅读，因为没有语法提示
+``` 
+export default class Singer{
+   constructor({id,avatarId,name}){
+     this.id=id;
+     this.name=name;
+     this.avatar=`https://y.gtimg.cn/music/photo_new/T001R150x150M000${avatarId}.jpg?max_age=2592000`;
+   }
+}
+
+```
+3. 在对象中因为没有私有方法（ES6规定），所以使用_ 开头的方法当作私有方法（规范）
+``` 
+map[k].push(new Singer(
+                {
+                  id:item.Fsinger_id,
+                  avatarId:item.Fsinger_mid,
+                  name:item.Fsinger_name
+                }
+              ))
+
+```
+4. ES6中允许对象赋值和取值obj[k]的形式
+
+### 事件
+1. 列表注册事件，一般给父盒子注册一个事件，就可以了，因为子盒子触发事件后
+会将事件和同子元素一起封装在event对象中
+
+#### 2. touchmove(e) 事件
+
+1. 事件中的e,是第一次触发move时的元素事件
+2. e.target :获取事件元素
+3. e.touches[0].pageY 获取当前touch元素对应屏幕的位置Y

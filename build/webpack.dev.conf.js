@@ -30,8 +30,8 @@ const devWebpackConfig = merge(baseWebpackConfig, {
   // these devServer options should be customized in /config/index.js
   devServer: {
     before(app){
-      //get 推荐页面,手机版，获取slider内容
-      app.get('/api/recommend',(req,res)=>{
+      //get 推荐页面,手机版，获取slider内容 ajax
+      app.get('/api/slider',(req,res)=>{
 
         let url='https://c.y.qq.com/musichall/fcgi-bin/fcg_yqqhomepagerecommend.fcg';
         axios.get(url,{
@@ -58,7 +58,7 @@ const devWebpackConfig = merge(baseWebpackConfig, {
         })
 
       })
-      //歌单列表，电脑版，获取歌单列表内容
+      //歌单列表，电脑版，获取歌单列表内容 jsonp
       app.get('/api/singlist',(req,res)=>{
         let url='https://c.y.qq.com/splcloud/fcgi-bin/fcg_get_diss_by_tag.fcg';
         axios.get(url,{
@@ -69,7 +69,7 @@ const devWebpackConfig = merge(baseWebpackConfig, {
             picmid:1,
             rnd:Math.random(),
             g_tk:5381,
-            jsonpCallback:'aa',
+            jsonpCallback:'getApiData',
             loginUin:0,
             hostUin:0,
             format:'jsonp',
@@ -91,7 +91,7 @@ const devWebpackConfig = merge(baseWebpackConfig, {
         })
 
       })
-      //歌手列表
+      //歌手列表 jsonp
       app.get('/api/singerlist',(req,res)=>{
         let url='https://c.y.qq.com/v8/fcg-bin/v8.fcg';
         axios.get(url,{
@@ -105,7 +105,7 @@ const devWebpackConfig = merge(baseWebpackConfig, {
             pagesize:100,
             pagenum:1,
             g_tk:5381,
-            jsonpCallback:'aa',
+            jsonpCallback:'getApiData',
             loginUin:0,
             hostUin:0,
             format:'jsonp',

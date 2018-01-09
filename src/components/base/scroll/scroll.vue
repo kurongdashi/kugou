@@ -11,7 +11,8 @@
     props: {
       probeType: {
         type: Number,
-        default: 1
+        default: 1,
+
       },
       click: {
         type: Boolean,
@@ -21,7 +22,10 @@
       singList: {
         type: Array,
         default:null
-
+      },
+      listenScroll:{
+          type:Boolean,
+          default:false
       }
     },
     mounted(){
@@ -35,6 +39,12 @@
             probeType:this.probeType,
           click:this.click
         });
+        if(this.listenScroll){
+            let vue=this;
+            this.scroll.on('scroll',(pos)=>{
+                vue.$emit('scroll',pos);
+            });
+        }
       },
       enable(){
         this.scroll && this.scroll.enable();
@@ -44,6 +54,13 @@
       },
       refresh(){
         this.scroll && this.scroll.refresh();
+      },
+      scrollTo(){
+          //这个arguments 对象是外层传入scrollTo的参数
+        this.scroll && this.scroll.scrollTo.apply(this.scroll,arguments)
+      },
+      scrollToElement(){
+          this.scroll && this.scroll.scrollToElement.apply(this.scroll,arguments)
       }
     },
     watch:{

@@ -39,8 +39,7 @@
   import slider from '../base/slider/slider'
   import scroll from '../base/scroll/scroll'
   import loading from '../base/loading/loading'
-  //此处的路径配置了别名
-  import {getJson} from 'common/js/json'
+  import * as Api from '../../common/js/jsonp'
 
   export default {
     data(){
@@ -54,30 +53,22 @@
       this._getData();
      setTimeout(()=>{
        this._getSingList();
-     },2000)
+     },1000)
     },
     methods: {
       _getData(){
-        axios.get('/api/recommend').then((res) => {
-          let result = res.data.data;
-          this.slider = result.slider;
-        }).catch((err) => {
-          console.log('错误类型：' + err)
-        })
+       axios.get('/api/slider').then((res)=>{
+          let data = res.data;
+          this.slider = data.data.slider;
+        });
 
       },
       _getSingList(){
-        axios.get('/api/singlist').then((res) => {
-          //得到的是带jsonp 调用的字符串 需要去掉aa()
-          let result = res.data;
-          result = getJson(result);
-          this.singList = result.data.list;
+        Api.getData('/api/singlist').then((res) => {
+          let data = res.data;
+          this.singList=data.list;
 
-//          console.log(result);
-
-        }).catch((err) => {
-          console.log('错误类型：' + err)
-        })
+        });
       },
       imgload(){
         if (!this.loadFlag) {
