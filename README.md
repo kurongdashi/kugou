@@ -134,7 +134,80 @@ this.scroll=new BScroll(this.$refs.slider,{
 ```
 ###  better-scroll实现左右联动
 
+#### 左侧滚动，右侧高亮显示
 
+1. 监听listview左侧滚动，获取滚动位置scrollY
+``` 
+onScroll(pos){
+        this.scrollY = pos.y;
+      },
+
+```
+2. 算出listview，左侧每个分类的区间高度，得到一个数组
+``` 
+# 当组件获取数据时，延时20ms是等dom渲染完成，开始计算区间高度
+data(){
+        setTimeout(() => {
+          this._getListHeights();
+        }, 20)
+      },
+
+```
+获取区间高度
+``` 
+_getListHeights(){
+        let height = 0;
+        this.listHeights = [];
+        this.listHeights.push(0);
+        let list = this.$refs.listGroup;
+        for (let i = 0; i < list.length; i++) {
+          let item = list[i];
+          height += item.clientHeight;
+          this.listHeights.push(height);
+        }
+        console.log(this.listHeights)
+      }
+```
+2. 监听scrollY,查看y值落在那个区间
+``` 
+scrollY(newY){
+        newY=newY>0?0:newY;
+        let listHeights = this.listHeights;
+        for (let i = 0; i < listHeights.length; i++) {
+          let height1 = listHeights[i];
+          let height2 = listHeights[i + 1];
+          if (!height2 || (-newY >= height1 && -newY < height2)) {
+            this.currentIndex = i;
+            return;
+          }
+        }
+        this.currentIndex = 0;
+      }
+
+```
+#### 右侧点击，左侧滚动到相应位置
+1. 监听右侧touch事件，获取点击index
+``` 
+onTouchStart(e){
+        let startIndex = getElementData(e.target, 'index');
+        this.touch.startIndex = startIndex;
+        this.touch.y1 = e.touches[0].pageY;
+        this._scrollTo(startIndex);
+      },
+```
+2. 设置listview 滚动到对应位置 scrollToElement(dom,opt)方法
+``` 
+_scrollTo(index){
+        if(!index){
+            return;
+        }
+        //手动点击时，设置scrollY
+        console.log('index='+index)
+        this.scrollY=-this.listHeights[index];
+        
+        this.$refs.listview.scrollToElement(this.$refs.listGroup[index], 0);
+
+```
 
 
 
@@ -252,3 +325,13 @@ map[k].push(new Singer(
 1. 事件中的e,是第一次触发move时的元素事件
 2. e.target :获取事件元素
 3. e.touches[0].pageY 获取当前touch元素对应屏幕的位置Y
+
+4. vue 中数据变化，到dom渲染完成需要一段时间 ,监听数据变化时，做一个延时操作
+
+``` 
+data(){
+       setTimeout(()=>{
+
+            },20)
+        },
+```

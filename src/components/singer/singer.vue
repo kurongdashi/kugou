@@ -1,6 +1,7 @@
 <template>
     <div class="singer">
-      <listview :data="singerList"></listview>
+      <listview :data="singerList" @select="onSelect"></listview>
+      <router-view></router-view>
     </div>
 </template>
 
@@ -8,7 +9,7 @@
   import Singer from '../../common/js/Singer'
   import * as Api from '../../common/js/jsonp'
   import listview from '../base/listview/listview'
-
+  import singerDetail from '../singer-detail/singer-detail'
   const HOT_NAME='热门';
   const HOT_LIST_LENGHT=10;
 
@@ -22,6 +23,9 @@
           this._getSingerList();
         },
         methods:{
+            onSelect(item){
+                this.$router.push(`/singer/${item.id}`)
+            },
           _getSingerList(){
             Api.getData('/api/singerlist').then(res=>{
                   let data=res.data;
@@ -92,7 +96,7 @@
           }
         },
       components:{
-            listview,
+            listview,singerDetail
       }
     }
 </script>
