@@ -136,7 +136,7 @@
           height += item.clientHeight;
           this.listHeights.push(height);
         }
-        console.log(this.listHeights)
+//        console.log(this.listHeights)
       }
     },
     watch: {
@@ -231,8 +231,7 @@
           line-height: 20px;
           font-size: 12px;
           &.current {
-            color: #2aabd2;
-            font-weight: 700;
+            color: gold;
           }
         }
 

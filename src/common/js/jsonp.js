@@ -7,8 +7,13 @@ import axios from 'axios'
  *  @param url 向后台模拟的api接口发送请求url
  *  @return promise 包裹了成功数据的promise对象
  */
-export function getData(url) {
-  let promise=axios.get(url).then(res=>{
+export function getData(url,id) {
+     id=id?id:''
+  let promise=axios.get(url,{
+    params:{
+      id:id
+    }
+  }).then(res=>{
     let data=res.data;
     // console.log(data);
     data=eval(data);

@@ -279,6 +279,8 @@ if(this.listenScroll){
     ...
 }：
 3. 文字或者盒子  
+overflow:hidden;//盒子
+text-overflow:ellipsis;//文字overflow
 white-space:nowrap;//不换行
 缩略
 text-overflow: ellipsis;
@@ -287,7 +289,9 @@ text-overflow: ellipsis;
 参数1：剩余空间为正时，占有比率
 参数2：剩余空间为负数时，占有比率
 参数3：在分配之前基础值多少
-         
+
+5. 电脑自带的韩文字体，当显示韩文是需要
+ Batang、Dotum、Gungsuh、Malgun Gothic
 ## ES6使用
 
 ### 对象的使用

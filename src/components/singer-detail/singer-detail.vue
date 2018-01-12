@@ -1,14 +1,66 @@
+<!--歌手详情页-->
 <template>
   <transition name="slider">
-    <div class="singer-detail">
-
-    </div>
+    <music-list :songs="songs" :title="title" :bgImg="bgImg"></music-list>
   </transition>
 </template>
 
 <script type="text/ecmascript-6">
+  import {mapGetters} from 'vuex'
+  import * as Api from '../../common/js/jsonp'
+  import {createSong} from '../../common/js/Song'
+  import musicList from '../music-list/music-list'
     export default {
+      data(){
+        return{
+            songs:[],
+        }
+      },
+      computed:{
+          title(){
+              return this.singer.name;
+          },
+        bgImg(){
+          return this.singer.avatar;
+        },
+        //映射出一个方法，参数是数组，可以传递多个方法名
+        ...mapGetters([
+          'singer'
+        ])
+      },
       components:{
+        musicList,
+      },
+      created(){
+          this._getDetail();
+
+
+      },
+      methods:{
+        _getDetail(){
+            if(!this.singer.avatarId){
+                this.$router.push('/singer');
+            }
+          Api.getData('/api/singerdetail',this.singer.avatarId).then(res=>{
+              let result=res.data;
+            this.songs=this._normalSong(result.list);
+            console.log( this.songs);
+          })
+        },
+
+        _normalSong(list){
+            let songs=[];
+            list.forEach((item)=>{
+                let {musicData}=item;
+                if(musicData.songmid && musicData.albummid){
+                    let song=createSong(musicData);
+                    songs.push(song);
+                }
+
+            })
+          return songs
+
+        }
       }
     }
 </script>
@@ -20,14 +72,6 @@
   .slider-enter-active,.slider-leave-active{
     transition:all .4s;
   }
-  .singer-detail{
-    width:100%;
-    height: 100%;
-    position: absolute;
-    left: 0;
-    top: 0;
-    z-index: 2;
-    background-color: #333;
-  }
+
 
 </style>
