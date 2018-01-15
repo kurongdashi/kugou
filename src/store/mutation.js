@@ -9,7 +9,25 @@ const mutation={
   //定义set对象方法，传递到state
   [types.SET_SINGER](state,singer){
     state.singer=singer;
-  }
+  },
+  [types.set_playing](state,flag){
+    state.playing=flag;
+  },
+  [types.set_fullScreen](state,flag){
+    state.fullScreen=flag;
+  },
+  [types.set_playList](state,list){
+    state.playList=list;
+  },
+  [types.set_sequenceList](state,list){
+    state.sequenceList=list;
+  },
+  [types.set_playMode](state,mode){
+    state.mode=mode;
+  },
+  [types.set_currentIndex](state,index){
+    state.currentIndex=index;
+  },
 }
 
 export default  mutation

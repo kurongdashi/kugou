@@ -59,4 +59,26 @@ assetsPublicPath: '/',
 1. assets目录下一般存放，和组件相关近的，会被webpack打包
 2. static 目录下存放的，资源，图片会原样引用，不会被压缩打包
 
+## main.js 文件中引入src内的静态资源文件，包括resetcss,font-css等
+``` 
+import resetcss from './common/css/cssrest.css'
+import icon from './common/css/icon.css'
+
+```
+## 在vue src/asset/下使用背景图需要做如下配置
+``` 
+if (options.extract) {
+      return ExtractTextPlugin.extract({
+        use: loaders,
+        publicPath:'../../',
+        assetsPublicPath: '/',
+        fallback: 'vue-style-loader'
+      })
+    } else {
+      return ['vue-style-loader'].concat(loaders)
+    }
+  }
+
+```
+
 

@@ -5,6 +5,9 @@ import fastclick from 'fastclick'
 import lazyload from 'vue-lazyload'
 import store from './store'
 
+import resetcss from './common/css/cssrest.css'
+import icon from './common/css/icon.css'
+
 Vue.use(lazyload,{
   loading:'./assets/logo.png'
 });

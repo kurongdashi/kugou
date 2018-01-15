@@ -179,6 +179,7 @@
 
 <style lang="scss" rel="stylesheet/scss">
   .listview {
+    top: 0;
     position: relative;
     .group-item {
       .title {

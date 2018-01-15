@@ -162,9 +162,11 @@
                    height: 8px;
                    margin: 8px;
                    border-radius: 50%;
-                   background-color: #fff;
+                   background-color: #9d9d9d;
                    &.active{
-                       background-color: #e92322;
+                        width: 16px;
+                      border-radius: 10px;
+                       background-color: #fff;
                    }
 
                }

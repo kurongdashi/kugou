@@ -3,7 +3,7 @@
 
     <div class="song-list">
       <ul>
-        <li class="song-item" v-for="song in songs">
+        <li class="song-item" v-for="(song,index) in songs" @click="selectSong(song,index)">
            <div class="content">
              <h2 class="name">{{song.name}}</h2>
              <p class="desc">{{song|getDesc}}</p>
@@ -25,6 +25,11 @@
         },
       computed:{
 
+      },
+      methods:{
+        selectSong(song,index){
+            this.$emit('selectSong',song,index);
+        }
       },
       components:{
        scroll

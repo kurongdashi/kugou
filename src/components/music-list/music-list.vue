@@ -18,7 +18,7 @@
     <div class="bg-layer" ref="bgLayer"></div>
     <div class="song-list-box">
       <scroll :data="songs" :probe-type="3" :listen-scroll="true" @scroll="scroll">
-        <song-list :songs="songs"></song-list>
+        <song-list :songs="songs" @selectSong="selectSong"></song-list>
       </scroll>
       <div class="loading-box"v-show="!songs.length">
         <loading ></loading>
@@ -31,6 +31,7 @@
   import songList from '../base/song-list/song-list'
   import loading from '../base/loading/loading'
   import scroll from '../base/scroll/scroll'
+  import {mapActions} from 'vuex'
   //这里的高度必须和css中设置的对应，否则无法实现跟随滚动效果
   const bgImgHeight=260;
   const topTitleHeight=40;
@@ -66,7 +67,18 @@
       },
       scroll(pos){
           this.scrollY=pos.y;
-      }
+      },
+      selectSong(song,index){
+          console.log('music-list===')
+          this.selectPlay({
+              list:this.songs,
+              index:index
+          });
+      },
+      ...mapActions([
+          'selectPlay'
+      ])
+
     },
     mounted(){
         //bglay的最大滚动高度=bgimg-toptile
@@ -74,7 +86,6 @@
     },
     watch:{
       scrollY(newY){
-          console.log(newY);
         //向下滚动处理
         let scale=1;
         if(newY>0){
