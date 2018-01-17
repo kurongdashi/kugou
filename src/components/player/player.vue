@@ -4,7 +4,7 @@
     @enter="enter"
     @after-enter="afterEnter"
     @leave="leave"
-    @after-leave="afterLeave">
+    @after-leave="afterLeave" >
     <div class="normal-player" v-show="fullScreen">
       <div class="top">
         <div class="down" @click="close">
@@ -15,7 +15,7 @@
       <div class="middle">
         <h3 class="name" v-html="currentSong.singer"></h3>
         <div class="cd-box">
-          <img :src="currentSong.image" alt="">
+          <img :src="currentSong.image" alt="" ref="cd">
         </div>
       </div>
       <div class="bottom">
@@ -52,6 +52,7 @@
 
 <script type="text/ecmascript-6">
   import {mapGetters,mapMutations} from 'vuex'
+  import anim from 'create-keyframe-animation'
   export default {
     computed: {
       ...mapGetters([
@@ -61,6 +62,66 @@
       ])
     },
     methods:{
+      //对cd图片进行缩写，移动动画处理,动画钩子是当dom渲染时执行动画
+      enter(el,done){
+        let {deltaX,deltaY,scale}=this._getPosAndScale();
+//        console.log(deltaX,deltaY,scale);
+        let animtion={
+            0:{
+              transform:`translate3d(${deltaX}px,${deltaY}px,0) scale(${scale})`
+            },
+            60:{
+              transform:`translate3d(0,0,0) scale(1.1)`
+            },
+          100:{
+            transform:`translate3d(0,0,0) scale(1)`
+
+          }
+        };
+        anim.registerAnimation({
+            name:'move',
+            animation:animtion,
+            presets:{
+                duration:400,
+                easing:'linear'
+          }
+        });
+//        钩子中只有调用done()方法后才能，执行到下一步
+        anim.runAnimation(this.$refs.cd,'move',done);
+      },
+      afterEnter(){
+        anim.unregisterAnimation('move');
+        this.$refs.cd.style.animation='';
+      },
+      leave(el,done){
+        this.$refs.cd.style.transition='all .4s';
+        let {deltaX,deltaY,scale}=this._getPosAndScale();
+        this.$refs.cd.style.transform= `translate3d(${deltaX}px,${deltaY}px,0) scale(${scale})`
+        this.$refs.cd.addEventListener('transitionEnd',done);
+      },
+      afterLeave(){
+        this.$refs.cd.style.transition='';
+        this.$refs.cd.style.transform='';
+      },
+      _getPosAndScale(){
+
+         let w1=window.innerWidth*0.8;
+         let w2=40;
+         let scale=w2/w1;
+
+          let x1=window.innerWidth/2;
+          let x2=35;
+          let deltaX=-(x1-x2);
+//        console.log(deltaX)
+          let y1=45+28+5+w1/2;
+          let y2=30;
+          let deltaY=window.innerHeight-y1-y2;
+
+          return {deltaX,deltaY,scale};
+
+
+
+      },
       close(){
         this.setFullScreen(false);
       },
@@ -130,9 +191,10 @@
         .cd-box {
           margin-top: 5px;
           text-align: center;
-          img {
-            border: 10px solid rgba(255, 255, 255, 0.2);
-            border-radius: 50%;
+            img {
+              width: 80%;
+              border: 10px solid rgba(255, 255, 255, 0.2);
+              border-radius: 50%;
           }
         }
       }
