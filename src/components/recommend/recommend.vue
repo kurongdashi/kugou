@@ -51,9 +51,7 @@
     },
     created(){
       this._getData();
-     setTimeout(()=>{
-       this._getSingList();
-     },1000)
+      this._getSingList();
     },
     methods: {
       _getData(){

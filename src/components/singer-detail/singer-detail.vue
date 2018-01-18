@@ -7,9 +7,11 @@
 
 <script type="text/ecmascript-6">
   import {mapGetters} from 'vuex'
-  import * as Api from '../../common/js/jsonp'
   import {createSong} from '../../common/js/Song'
   import musicList from '../music-list/music-list'
+
+  import * as api from '../../common/js/api'
+
     export default {
       data(){
         return{
@@ -41,11 +43,13 @@
             if(!this.singer.avatarId){
                 this.$router.push('/singer');
             }
-          Api.getData('/api/singerdetail',this.singer.avatarId).then(res=>{
-              let result=res.data;
+
+          api.getSingerDetail(this.singer.avatarId).then(res=>{
+            let result=res.data;
             this.songs=this._normalSong(result.list);
-            console.log( this.songs);
-          })
+//            console.log( this.songs);
+          });
+
         },
 
         _normalSong(list){

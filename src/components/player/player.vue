@@ -1,10 +1,12 @@
 <template>
   <div class="player" v-show="playList.length>0">
+
     <transition name="normal"
     @enter="enter"
     @after-enter="afterEnter"
     @leave="leave"
     @after-leave="afterLeave" >
+
     <div class="normal-player" v-show="fullScreen">
       <div class="top">
         <div class="down" @click="close">
@@ -22,7 +24,7 @@
         <div class="play-box">
           <span class="icon-sequence"></span>
           <span class="icon-prev"></span>
-          <span class="icon-play"></span>
+          <span :class="playIcon" @click="togglePlaying"></span>
           <span class="icon-next"></span>
           <span class="icon-favorite"></span>
         </div>
@@ -31,7 +33,9 @@
         <img :src="currentSong.image" alt="">
       </div>
     </div>
+
     </transition>
+
     <transition name="min">
     <div class="min-player" v-show="!fullScreen" @click="open">
       <div class="cd-box">
@@ -47,21 +51,55 @@
       </div>
     </div>
     </transition>
+    <audio :src="songUrl" ref="audio"></audio>
   </div>
 </template>
 
 <script type="text/ecmascript-6">
   import {mapGetters,mapMutations} from 'vuex'
+
   import anim from 'create-keyframe-animation'
+  import {getSongUrl} from '../../common/js/Song'
+
   export default {
+      data(){
+        return{
+            songUrl:''
+        }
+      },
+    watch:{
+      currentSong(song){
+          getSongUrl(song.mid).then(res=>{
+            this.songUrl=res;
+//            console.log(res);
+            this.$nextTick(()=>{
+                this.$refs.audio.play();
+            })
+
+          })
+      },
+      playing(newPlaying){
+        let audio=this.$refs.audio;
+        this.$nextTick(()=>{
+          newPlaying?audio.play():audio.pause();
+        })
+      }
+    },
     computed: {
+          playIcon(){
+            return this.playing?'icon-pause':'icon-play';
+          },
       ...mapGetters([
         'fullScreen',
         'playList',
-        'currentSong'
+        'currentSong',
+        'playing'
       ])
     },
     methods:{
+          togglePlaying(){
+            this.setPlaying(!this.playing);
+          },
       //对cd图片进行缩写，移动动画处理,动画钩子是当dom渲染时执行动画
       enter(el,done){
         let {deltaX,deltaY,scale}=this._getPosAndScale();
@@ -97,12 +135,13 @@
         this.$refs.cd.style.transition='all .4s';
         let {deltaX,deltaY,scale}=this._getPosAndScale();
         this.$refs.cd.style.transform= `translate3d(${deltaX}px,${deltaY}px,0) scale(${scale})`
-        this.$refs.cd.addEventListener('transitionEnd',done);
+        this.$refs.cd.addEventListener('transitionend',done);
       },
       afterLeave(){
         this.$refs.cd.style.transition='';
         this.$refs.cd.style.transform='';
       },
+      //获取normal下cd图片和min下cd图片位置差，和缩放比
       _getPosAndScale(){
 
          let w1=window.innerWidth*0.8;
@@ -119,8 +158,6 @@
 
           return {deltaX,deltaY,scale};
 
-
-
       },
       close(){
         this.setFullScreen(false);
@@ -130,6 +167,7 @@
       },
       ...mapMutations({
           setFullScreen:'set_fullScreen',
+          setPlaying:'set_playing'
       })
     }
   }

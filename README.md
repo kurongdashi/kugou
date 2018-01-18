@@ -342,4 +342,98 @@ data(){
 
 ## Vuex 
 
-### vue组件传递数据的中转站，不再需要显示的在每个组件上传递，
+### vue组件传递数据的中转站，不再需要显示的在每个组件上传递
+1. 文件组成
+store目录下有
+index.js vuex的状态管理入口文件
+state.js  定义状态文件
+mutation.js 操作单个状态
+mutation-types.js 操作名称
+getter.js  获取state
+actions.js  一次操作多个mutation的封装
+
+
+2. 使用,在main.js文件中
+``` 
+import store from './store'
+//注册使用
+new Vue({
+  el: '#app',
+  router,store,
+  render: h => h(App)
+})
+
+```
+3. 在组件中，使用
+``` 
+//引入vuex提供的扩展方法，可以将其扩展到组件中
+  import {mapGetters,mapMutations} from 'vuex'
+  
+   computed: {
+        ...mapGetters([
+          'fullScreen',
+          'playList',
+          'currentSong',
+          'playing'
+        ])
+      },
+
+```
+
+
+
+
+
+
+
+
+
+
+## create-keyframe-animation 插件,配合上vue 的 transition js钩子
+[参考](http://www.mamicode.com/info-detail-1857961.html)
+###### vue的js钩子函数
+``` 
+  <transition name="normal"
+    @enter="enter"
+    @after-enter="afterEnter"
+    @leave="leave"
+    @after-leave="afterLeave" >
+```
+
+1. 引入
+``` 
+import anim from 'create-keyframe-animation'
+
+```
+2. 注册，在enter()中使用
+``` 
+ let animtion={
+            0:{
+              transform:`translate3d(${deltaX}px,${deltaY}px,0) scale(${scale})`
+            },
+            60:{
+              transform:`translate3d(0,0,0) scale(1.1)`
+            },
+          100:{
+            transform:`translate3d(0,0,0) scale(1)`
+
+          }
+        };
+        anim.registerAnimation({
+            name:'move',
+            animation:animtion,
+            presets:{
+                duration:400,
+                easing:'linear'
+          }
+        });
+//        钩子中只有调用done()方法后才能，执行到下一步
+        anim.runAnimation(this.$refs.cd,'move',done);
+
+```
+3. 注销，在afterEnter()中使用
+``` 
+anim.unregisterAnimation('move');
+        this.$refs.cd.style.animation='';
+
+```    

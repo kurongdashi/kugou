@@ -10,6 +10,10 @@
   import * as Api from '../../common/js/jsonp'
   import listview from '../base/listview/listview'
   import singerDetail from '../singer-detail/singer-detail'
+
+
+
+
   import {mapMutations} from 'vuex'
   const HOT_NAME='热门';
   const HOT_LIST_LENGHT=10;
