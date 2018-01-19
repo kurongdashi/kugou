@@ -12,7 +12,9 @@
         <div class="play-box" v-show="randomPlay">
           <img src="./play.png" alt="" class="icon"><span class="text">随机播放全部</span>
         </div>
+        <div class="filter"></div>
       </div>
+
     </div>
     <!--这个层在歌曲列表向上滚动时，跟随滚动-->
     <div class="bg-layer" ref="bgLayer"></div>
@@ -168,6 +170,12 @@
         background-size: cover;
         /*把top设置为缩放中心点*/
         transform-origin: top;
+        .filter{
+          width: 100%;
+          height: 100%;
+          background-color: rgba(0,0,0,0.3);
+        }
+
         .play-box{
           width: 100px;
           padding:5px 15px;

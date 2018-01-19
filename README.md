@@ -255,7 +255,7 @@ if(this.listenScroll){
 
 ## 移动端布局，css实现
 
-### 1. 在解决布局高度问题时，能用css解决的，尽量用css解决
+###  在解决布局高度问题时，能用css解决的，尽量用css解决
 例如：
 ``` 
 <body>
@@ -271,6 +271,19 @@ if(this.listenScroll){
   
 </body>
 ```
+### 动画暂停
+```
+ .play {
+    animation: cd linear 20s infinite;
+  }
+
+  .pause {
+    animation-play-state: paused;
+  }
+
+```
+
+
 ### 2. 常用属性 
 1. min-height: 固定最小高度，防止变形
  
@@ -323,8 +336,10 @@ map[k].push(new Singer(
 ### 事件
 1. 列表注册事件，一般给父盒子注册一个事件，就可以了，因为子盒子触发事件后
 会将事件和同子元素一起封装在event对象中
+#### 事件参数event click(e),touch(e)
+![event](./event.png)
 
-#### 2. touchmove(e) 事件
+####  touchmove(e) 事件
 
 1. 事件中的e,是第一次触发move时的元素事件
 2. e.target :获取事件元素
@@ -339,7 +354,8 @@ data(){
             },20)
         },
 ```
-
+### js 三大家族 offset、client、screen
+[三大家族](http://blog.csdn.net/k491022087/article/details/52629743)
 ## Vuex 
 
 ### vue组件传递数据的中转站，不再需要显示的在每个组件上传递
