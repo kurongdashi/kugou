@@ -356,6 +356,8 @@ data(){
 ```
 ### js 三大家族 offset、client、screen
 [三大家族](http://blog.csdn.net/k491022087/article/details/52629743)
+
+
 ## Vuex 
 
 ### vue组件传递数据的中转站，不再需要显示的在每个组件上传递
@@ -395,7 +397,10 @@ new Vue({
       },
 
 ```
-
+4. 在vue中备份对象或者数组,因为变量赋值，只是指向同一块内存地址，修改时会修改内存中的数据
+``` 
+let newArr = arr.slice();
+```
 
 
 

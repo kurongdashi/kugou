@@ -29,7 +29,7 @@
             <span class="time right">{{formatTime(currentSong.duration)}}</span>
           </div>
           <div class="play-box">
-            <span :class="modeIcon"></span>
+            <span :class="modeIcon" @click="selectMode"></span>
             <span class="icon-prev" @click="prev"></span>
             <span :class="playIcon" @click="togglePlaying"></span>
             <span class="icon-next" @click="next"></span>
@@ -58,7 +58,7 @@
         </div>
       </div>
     </transition>
-    <audio :src="songUrl" ref="audio" @canplay="canplay" @error="error" @timeupdate="update"></audio>
+    <audio :src="songUrl" ref="audio" @canplay="canplay" @error="error" @timeupdate="update" @ended="end"></audio>
   </div>
 </template>
 
@@ -68,7 +68,9 @@
   import anim from 'create-keyframe-animation'
   import {getSongUrl} from '../../common/js/Song'
   import progressBar from '../base/progress-bar/progress-bar'
+  import progressCircle from '../base/progress-circle/progress-circle'
   import {playMode} from '../../common/js/config'
+  import {shuffle} from '../../common/js/utils'
 
   export default {
     data(){
@@ -76,37 +78,16 @@
         songUrl: '',
         songReady: false,
         currentTime: 0,
-      }
-    },
-    watch: {
-      //监听当前播放音乐数据，获取对应的播放url
-      currentSong(song){
-        getSongUrl(song.mid).then(res => {
-          this.songUrl = res;
-
-          this.$nextTick(() => {
-            this.$refs.audio.play();
-          })
-
-        })
-      },
-      //通过vuex中playing状态，来真正控制播放、暂停
-      playing(newPlaying){
-        this.$nextTick(() => {
-          let audio = this.$refs.audio;
-          if (this.songReady) {
-            newPlaying ? audio.play() : audio.pause();
-          }
-        })
+        tempList:null
       }
     },
     computed: {
-        modeIcon(){
-          return this.mode===playMode.sequence?'icon-sequence':this.mode===playMode.loop?'icon-loop':'icon-random'
-        },
+      modeIcon(){
+        return this.mode === playMode.sequence ? 'icon-sequence' : this.mode === playMode.loop ? 'icon-loop' : 'icon-random'
+      },
       percent(){
         let time = this.currentTime;
-        let percent= time / this.currentSong.duration  ;
+        let percent = time / this.currentSong.duration;
         return percent;
       },
       cdClass(){
@@ -124,18 +105,54 @@
         'currentSong',
         'playing',
         'currentIndex',
-        'mode'
+        'mode',
+        'sequenceList'
 
       ])
     },
     methods: {
+      end(){
+        if (this.mode === playMode.loop) {
+          this.loop();
+        } else {
+          this.next();
+        }
+      },
+      loop(){
+        this.$refs.audio.currentTime=0;
+        this.$refs.audio.play();
+      },
+      selectMode(){
+        let mode = (this.mode + 1) % 3;
+        this.setMode(mode);
+        let list = null;
+        if(this.tempList==null){
+            this.tempList=this.sequenceList.slice();
+        }
+        if (mode === playMode.random) {
+          list = shuffle(this.sequenceList);
+        } else {
+          list = this.tempList;
+        }
+        this.resetCurrentIndex(list)
+        this.setPlayList(list);
+
+
+
+      },
+      resetCurrentIndex(list){
+        let index = list.findIndex((item) => {
+          return item.id === this.currentSong.id;
+        })
+        this.setCurrentIndex(index);
+      },
       onPercentChange(percent){
-          this.$refs.audio.currentTime=this.currentSong.duration*percent;
-          if(!this.playing){
-              this.togglePlaying();
-          }
-        },
-        //时间修正
+        this.$refs.audio.currentTime = this.currentSong.duration * percent;
+        if (!this.playing) {
+          this.togglePlaying();
+        }
+      },
+      //时间修正
       formatTime(time){
         time = time | 0;
         let minite = time / 60 | 0;
@@ -287,11 +304,43 @@
       ...mapMutations({
         setFullScreen: 'set_fullScreen',
         setPlaying: 'set_playing',
-        setCurrentIndex: 'set_currentIndex'
+        setCurrentIndex: 'set_currentIndex',
+        setMode: 'set_playMode',
+        setPlayList: 'set_playList'
       })
     },
+    watch: {
+      //监听当前播放音乐数据，获取对应的播放url
+      currentSong(newSong, oldSong){
+        if (newSong.id === oldSong.id) {
+          return;
+        }
+        newSong.getAudioUrl(newSong.mid).then(res => {
+          this.songUrl = res;
+
+          this.$nextTick(() => {
+            this.$refs.audio.play();
+
+            newSong.getLyric(newSong.mid).then(res=>{
+              console.log(res.data)
+            });
+
+          })
+
+        })
+      },
+      //通过vuex中playing状态，来真正控制播放、暂停
+      playing(newPlaying){
+        this.$nextTick(() => {
+          let audio = this.$refs.audio;
+          if (this.songReady) {
+            newPlaying ? audio.play() : audio.pause();
+          }
+        })
+      }
+    },
     components: {
-      progressBar,
+      progressBar, progressCircle
     }
   }
 </script>
@@ -384,7 +433,7 @@
           .progress-box {
             display: inline-block;
             flex: 1;
-            margin:auto 0;
+            margin: auto 0;
           }
         }
         .play-box {
@@ -452,6 +501,9 @@
         height: 60px;
         display: flex;
         justify-content: space-around;
+        .progress-circle {
+          position: absolute;
+        }
         span {
           margin: auto;
           color: #ffff00;

@@ -2,6 +2,7 @@
  * Created by Administrator on 2018/1/12.
  */
 import jsonp from './promiseJsonp'
+import axios from 'axios'
 
  class Song{
   constructor({id,mid,name,singer,duration,album,image,url}){
@@ -14,8 +15,14 @@ import jsonp from './promiseJsonp'
       this.image=image;
       this.url=url;
   }
-
-
+  //获取音乐播放地址
+  getAudioUrl(mid){
+   return getSongUrl(mid)
+  }
+  //获取音乐歌词
+  getLyric(mid){
+    return getSingerLyric(mid);
+  }
 }
 export function createSong(musicData) {
 
@@ -39,7 +46,7 @@ function filterSinger(singer) {
 
 }
 
-export function getSongUrl(mid) {
+function getSongUrl(mid) {
 
   let url='https://c.y.qq.com/base/fcgi-bin/fcg_music_express_mobile3.fcg';
   let guid=_getGuid();
@@ -62,18 +69,44 @@ export function getSongUrl(mid) {
     filename:`C400${mid}.m4a`,
     guid:guid,
   }
-  let p= jsonp(url,data,{param:'callback',name:'callback'}).then(res=>{
+  let opt = {
+    param:'callback',
+    name:'callback'
+  };
+  return jsonp(url,data,opt).then(res=>{
     let obj=res.data;
     obj=obj.items[0];
     let url=`http://dl.stream.qqmusic.qq.com/${obj.filename}?vkey=${obj.vkey}&guid=${guid}&uin=0&fromtag=66`;
-     console.log(url);
+     // console.log(url);
     return url;
-  })
-  return p;
+  });
 
 }
 function _getGuid() {
   var t = (new Date).getUTCMilliseconds();
   return Math.round(2147483647 * Math.random()) * t % 1e10;
+}
+
+
+function getSingerLyric(mid) {
+  let url = '/api/lyric';
+  let data = {
+    jsonpCallback:'callback',
+    pcachetime:1516777506937,
+    songmid: mid,
+    g_tk: 5381,
+    loginUin: 0,
+    hostUin: 0,
+    format: 'jsonp',
+    inCharset: 'utf-8',
+    outCharset: 'utf-8',
+    notice: 0,
+    platform: 'yqq',
+    needNewCode: 0,
+  };
+  return axios.get(url,{
+    params:data
+  });
+
 }
 

@@ -123,38 +123,27 @@ const devWebpackConfig = merge(baseWebpackConfig, {
         })
 
       })
-      //歌手详情 jsonp
-      app.get('/api/singerdetail',(req,res)=>{
-        let url='https://c.y.qq.com/v8/fcg-bin/fcg_v8_singer_track_cp.fcg';
-        let id=req.query.id;
+
+      app.get('/api/lyric',(req,res)=>{
+        let url = 'https://c.y.qq.com/lyric/fcgi-bin/fcg_query_lyric_new.fcg';
         axios.get(url,{
           headers:{
-            // referer:'https://y.qq.com/n/yqq/singer/002J4UUk29y8BY.html',
+            referer:'https://y.qq.com/portal/player.html'
           },
-          params:{
-            g_tk:5381,
-            jsonpCallback:'getApiData',
-            loginUin:0,
-            hostUin:0,
-            format:'jsonp',
-            inCharset:'utf8',
-            outCharset:'utf-8',
-            notice:0,
-            platform:'yqq',
-            needNewCode:0,
-            singermid:id,
-            order:'listen',
-            begin:0,
-            num:30,
-            songstatus:1
+          params:req.query
+        }).then(response=>{
+          let ret=response.data;
+          let reg=/^\w+\(({[^()]+})\)$/;
+          if(typeof ret==='string'){
+            let match=ret.match(reg);
+            if(match){
+              res.json(JSON.parse(match[1]))
+            }
           }
-        }).then((response)=>{
-          res.json(response.data);
-
-        }).catch((err)=>{
+            res.json()
+        }).catch(err=>{
           console.log('错误类型：'+err)
         })
-
       })
 
 

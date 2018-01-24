@@ -9,7 +9,8 @@
         <h2 class="title" v-html="title"></h2>
       </div>
       <div class="bg-img" :style="bgStyle" ref="bgImg">
-        <div class="play-box" v-show="randomPlay">
+
+        <div class="play-box" v-show="randomPlay" @click="random">
           <img src="./play.png" alt="" class="icon"><span class="text">随机播放全部</span>
         </div>
         <div class="filter"></div>
@@ -64,6 +65,11 @@
       }
     },
     methods: {
+      random(){
+        this.setRandomPlay({
+          list:this.songs,
+        });
+      },
       back(){
         this.$router.back();
       },
@@ -71,14 +77,15 @@
           this.scrollY=pos.y;
       },
       selectSong(song,index){
-          console.log('music-list===')
+//        console.log(index)
           this.selectPlay({
               list:this.songs,
               index:index
           });
       },
       ...mapActions([
-          'selectPlay'
+          'selectPlay',
+          'setRandomPlay',
       ])
 
     },
