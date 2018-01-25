@@ -33,7 +33,7 @@
   import scroll from '../scroll/scroll'
   import {getElementData} from '../../../common/js/dom'
   const EL_HEIGHT = 20;//元素的高度
-  const FIXED_TITLE_HEIGHT=28;//fixed title 高度
+  const FIXED_TITLE_HEIGHT = 28;//fixed title 高度
 
   export default {
 
@@ -50,7 +50,7 @@
         scrollY: 0,
         currentIndex: 0,
         probeType: 3,
-        diff:0
+        diff: 0
       }
     },
     created(){
@@ -69,16 +69,16 @@
        *
        */
       fixedTitle(){
-          if(this.scrollY>0){
-              return '';
-          }
-        return this.data[this.currentIndex]?this.data[this.currentIndex].title:'';
+        if (this.scrollY > 0) {
+          return '';
+        }
+        return this.data[this.currentIndex] ? this.data[this.currentIndex].title : '';
       }
     },
     methods: {
-        selectItem(item){
-          this.$emit('select',item);
-        },
+      selectItem(item){
+        this.$emit('select', item);
+      },
       /**
        * 点击右侧列表，左侧滚动到对应的位置
        * @param e
@@ -118,12 +118,12 @@
        * @private
        */
       _scrollTo(index){
-        if(!index){
-            return;
+        if (!index) {
+          return;
         }
         //手动点击时，设置scrollY
-        console.log('index='+index)
-        this.scrollY=-this.listHeights[index];
+        console.log('index=' + index)
+        this.scrollY = -this.listHeights[index];
         this.$refs.listview.scrollToElement(this.$refs.listGroup[index], 0);
       },
       _getListHeights(){
@@ -149,13 +149,13 @@
        *  scrollY变化时要对比listHeights，落在那个区间，获取index
        */
       scrollY(newY){
-        newY=newY>0?0:newY;
+        newY = newY > 0 ? 0 : newY;
         let listHeights = this.listHeights;
         for (let i = 0; i < listHeights.length; i++) {
           let height1 = listHeights[i];
           let height2 = listHeights[i + 1];
           if (!height2 || (-newY >= height1 && -newY < height2)) {
-            this.diff=height2+newY;
+            this.diff = height2 + newY;
 
             this.currentIndex = i;
             return;
@@ -164,11 +164,11 @@
         this.currentIndex = 0;
       },
       diff(){
-          let tranY=0;
-          if(this.diff>0 && this.diff<FIXED_TITLE_HEIGHT){
-             tranY=FIXED_TITLE_HEIGHT-this.diff;
-          }
-          this.$refs.fixedTitle.style.transform=`translate3d(0,${-tranY}px,0)`
+        let tranY = 0;
+        if (this.diff > 0 && this.diff < FIXED_TITLE_HEIGHT) {
+          tranY = FIXED_TITLE_HEIGHT - this.diff;
+        }
+        this.$refs.fixedTitle.style.transform = `translate3d(0,${-tranY}px,0)`
       }
     },
     components: {
@@ -179,8 +179,12 @@
 
 <style lang="scss" rel="stylesheet/scss">
   .listview {
-    top: 0;
-    position: relative;
+    overflow: hidden;
+    position: absolute;
+    width: 100%;
+    top: 90px;
+    left: 0;
+    bottom: 0;
     .group-item {
       .title {
         line-height: 28px;
@@ -239,12 +243,12 @@
       }
 
     }
-    .list-title-box{
+    .list-title-box {
       width: 100%;
       position: absolute;
       left: 0;
       top: 0;
-      .title{
+      .title {
         line-height: 28px;
         padding-left: 15px;
         font-size: 16px;

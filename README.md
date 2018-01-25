@@ -61,12 +61,12 @@ created(){
 dom数据加载完成后，必须调用scroll.refresh(),重新计算高度
 
 ``` 
-# 这层作为注入层 通过js代码注入
+# 这层作为注入层 ,通过js代码注入,高度固定
 
 <div ref='wrapper'>
-  # 这层就是包裹list-item的
+  # 这层就是包裹list-item的,包裹层，上层通过计算这层的高度产生滚动
   <div class='list-content'>
-      # 这是item
+      # 这是item层
     <div class="item-list">...</div>  
       ...
       
@@ -88,6 +88,51 @@ dom数据加载完成后，必须调用scroll.refresh(),重新计算高度
   left: 0;
   bottom: 0;
 }
+
+```
+### 封装scroll组件
+1. dom 设置slot 插槽，就只是做滚动注入作用，没有样式
+``` 
+<template>
+  <div class="scroll" ref="scroll">
+    <slot></slot>
+  </div>
+</template>
+```
+2. 监听必要的数据，初始化滚动
+``` 
+ watch:{
+        //当内部数据变化时，自动刷新，不需要每个组件调用
+      data(){
+        let height=document.body.clientHeight;
+          setTimeout(() => {
+            this.refresh();
+          }, 20)
+        }
+    }
+
+```
+
+3. 暴露事件
+
+``` 
+ enable(){
+        this.scroll && this.scroll.enable();
+      },
+      disable(){
+        this.scroll && this.scroll.disable();
+      },
+      refresh(){
+        this.scroll && this.scroll.refresh();
+      },
+      scrollTo(){
+          //这个arguments 对象是外层传入scrollTo的参数
+        this.scroll && this.scroll.scrollTo.apply(this.scroll,arguments)
+      },
+      scrollToElement(){
+          this.scroll && this.scroll.scrollToElement.apply(this.scroll,arguments)
+      }
+
 
 ```
 
@@ -305,6 +350,13 @@ text-overflow: ellipsis;
 
 5. 电脑自带的韩文字体，当显示韩文是需要
  Batang、Dotum、Gungsuh、Malgun Gothic
+ 
+###  布局适配手机
+##### 宽度自适应：
+ 1. 固定左右任意一边边，另一边自适应
+ 2. 固定中间，左右两端自适应
+##### 高度自适应： 
+ 3. 固定上下，中间自适应
 ## ES6使用
 
 ### 对象的使用
@@ -356,6 +408,16 @@ data(){
 ```
 ### js 三大家族 offset、client、screen
 [三大家族](http://blog.csdn.net/k491022087/article/details/52629743)
+
+### H5 audio 
+1. canplay ：url加载完成，可以播放
+2. error :url加载失败
+3. timeupdate: 播放时间更新
+4. ended:播放结束
+``` 
+ <audio  @canplay="canplay" @error="error" @timeupdate="update" @ended="end"></audio>
+
+```
 
 
 ## Vuex 
@@ -458,3 +520,14 @@ anim.unregisterAnimation('move');
         this.$refs.cd.style.animation='';
 
 ```    
+
+## js-base64 插件对数据进行加密解密
+
+ [js-base64](https://www.npmjs.com/package/js-base64)
+
+## lyric-parser插件 对歌词解析
+
+``` 
+
+
+```

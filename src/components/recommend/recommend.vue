@@ -1,6 +1,6 @@
 <template>
   <div class="recommend">
-    <scroll :singList="singList" ref="scroll">
+    <scroll :data="singList" ref="scroll" class="listview">
       <div class="recommend-content">
           <!--轮播图-->
           <div class="slider-wrapper">
@@ -84,7 +84,14 @@
 
 <style lang="scss" rel="stylesheet/scss">
   .recommend {
-
+    .listview{
+      overflow: hidden;
+      position: absolute;
+      width: 100%;
+      top: 90px;
+      left: 0;
+      bottom: 0;
+    }
     .recommend-content {
       font-size: 0;
       .recommend-list {

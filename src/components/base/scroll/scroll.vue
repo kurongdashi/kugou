@@ -19,7 +19,7 @@
         default: true
       },
       //scroll 内部dom使用的数据
-      singList: {
+      data: {
         type: Array,
         default:null
       },
@@ -65,7 +65,7 @@
     },
     watch:{
         //当内部数据变化时，自动刷新，不需要每个组件调用
-      singList(){
+      data(){
         let height=document.body.clientHeight;
           setTimeout(() => {
             this.refresh();
@@ -76,14 +76,4 @@
 
   }
 </script>
-<style lang="scss" rel="stylesheet/scss">
-.scroll{
-  overflow: hidden;
-  position: absolute;
-  width: 100%;
-  top: 90px;
-  left: 0;
-  bottom: 0;
-}
-</style>
 

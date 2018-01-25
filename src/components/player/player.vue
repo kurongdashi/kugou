@@ -14,12 +14,29 @@
           </div>
           <h2 class="title" v-html="currentSong.name"></h2>
         </div>
-        <div class="middle">
+
+        <div class="middle"
+             @touchstart.prevent="onTouchStart"
+             @touchmove.prevent="onTouchMove"
+             @touchend="onTouchEnd"
+        >
           <h3 class="name" v-html="currentSong.singer"></h3>
-          <div class="cd-box">
-            <img :src="currentSong.image" alt="" ref="cd" :class="cdClass">
+          <div class="img-box" ref="cdBox">
+            <div class="cd-box">
+              <img :src="currentSong.image" alt="" ref="cd" :class="cdClass">
+            </div>
+          </div>
+          <scroll  class="lyric-box" v-if="currentLyric" ref="lyricBox" :data="currentLyric.lines" >
+            <div>
+              <p ref="lyricLine" class="lyric-line" v-for="(line,index) in currentLyric.lines" :class="{currentLine:currentLineNum===index}">{{line.txt}}</p>
+            </div>
+          </scroll>
+          <div class="dot-box">
+            <span :class="{active:currentShow==='cd'}"></span>
+            <span :class="{active:currentShow==='lyric'}"></span>
           </div>
         </div>
+
         <div class="bottom">
           <div class="time-box">
             <span class="time">{{formatTime(currentTime)}}</span>
@@ -71,6 +88,9 @@
   import progressCircle from '../base/progress-circle/progress-circle'
   import {playMode} from '../../common/js/config'
   import {shuffle} from '../../common/js/utils'
+  import Lyric from 'lyric-parser'
+  import scroll from '../base/scroll/scroll'
+  import {Transform} from '../../common/js/dom'
 
   export default {
     data(){
@@ -78,8 +98,14 @@
         songUrl: '',
         songReady: false,
         currentTime: 0,
-        tempList:null
+        tempList: null,
+        currentLyric: null,
+        currentLineNum:0,
+        currentShow:'cd'
       }
+    },
+    created(){
+      this.touch={};
     },
     computed: {
       modeIcon(){
@@ -111,6 +137,75 @@
       ])
     },
     methods: {
+       onTouchStart(e){
+           this.touch.init=true;
+           let touch=e.touches[0];
+           this.touch.startX=touch.pageX;
+           this.touch.startY=touch.pageY;
+
+       },
+      onTouchMove(e){
+        if(!this.touch.init){
+               return;
+           }
+        let touch=e.touches[0];
+        //x方向上滑动位置差
+        let deltaX=touch.pageX-this.touch.startX;
+        let deltaY=touch.pageY-this.touch.startY;
+        if(Math.abs(deltaY)>Math.abs(deltaX)){
+          return;
+        }
+        //计算偏移量
+        let offsetWidth;
+        let opacity
+        if(this.currentShow==='cd'){
+           offsetWidth=Math.max(-window.innerWidth,deltaX);
+           opacity=1;
+        }else{
+          offsetWidth=Math.min(window.innerWidth,deltaX);
+          opacity=0;
+        }
+        //计算偏移百分比
+        this.touch.percent=Math.abs(offsetWidth/window.innerWidth);
+        //进行移动
+        this.$refs.lyricBox.$el.style.transform=`translate3d(${offsetWidth}px,0,0)`;
+
+        this.$refs.cdBox.style.opacity=opacity-this.touch.percent;
+
+      },
+      onTouchEnd(){
+        let lyricDom=this.$refs.lyricBox.$el;
+        this.$refs.lyricBox.$el.style.transform='';
+//          let left=this.currentShow==='cd'?window.innerWidth:0
+//          left+=deltaX;
+//          console.log(this.touch.percent)
+//          移动完成后需要设置left的值
+          let left=0;
+          if(this.currentShow==='cd'){
+              if(this.touch.percent>0.1){
+                  //歌词页面显示出来
+                  this.currentShow='lyric';
+                  left=0;
+              }else{
+                  //歌词页面隐藏
+                left=window.innerWidth;
+              }
+          }else{
+            if(this.touch.percent>0.1){
+
+              this.currentShow='cd';
+              //cd页面显示出来
+              left=window.innerWidth;
+            }else{
+              //歌词页面隐藏
+              left=0;
+            }
+          }
+        lyricDom.style.transition='all 300ms';
+        lyricDom.style.left=`${left}px`;
+        let cdShow=this.currentShow==='cd'?1:0;
+        this.$refs.cdBox.style.opacity=cdShow;
+      },
       end(){
         if (this.mode === playMode.loop) {
           this.loop();
@@ -119,15 +214,15 @@
         }
       },
       loop(){
-        this.$refs.audio.currentTime=0;
+        this.$refs.audio.currentTime = 0;
         this.$refs.audio.play();
       },
       selectMode(){
         let mode = (this.mode + 1) % 3;
         this.setMode(mode);
         let list = null;
-        if(this.tempList==null){
-            this.tempList=this.sequenceList.slice();
+        if (this.tempList == null) {
+          this.tempList = this.sequenceList.slice();
         }
         if (mode === playMode.random) {
           list = shuffle(this.sequenceList);
@@ -136,7 +231,6 @@
         }
         this.resetCurrentIndex(list)
         this.setPlayList(list);
-
 
 
       },
@@ -321,8 +415,28 @@
           this.$nextTick(() => {
             this.$refs.audio.play();
 
-            newSong.getLyric(newSong.mid).then(res=>{
-              console.log(res.data)
+            newSong.getLyric(newSong.mid).then(lyric => {
+
+              this.currentLyric = new Lyric(lyric,(line,txt)=>{
+                  //播放歌词回调函数
+                let lineNum=line.lineNum;
+                this.currentLineNum=lineNum;//设置当前播放行
+
+                if(lineNum>5){
+                  let el=this.$refs.lyricLine[lineNum-5];
+                  //让scroll跟随歌词播放滚动，让歌词始终在屏幕中间位置
+                  this.$refs.lyricBox.scrollToElement(el,1000);
+                }else{
+                  this.$refs.lyricBox.scrollTo(0,0,1000)
+                }
+              });
+
+              //播放歌词,可以到时间了，调用回调函数
+              if(this.playing){
+                  this.currentLyric.play();
+              }
+//              console.log(this.currentLyric)
+
             });
 
           })
@@ -340,7 +454,7 @@
       }
     },
     components: {
-      progressBar, progressCircle
+      progressBar, progressCircle, scroll
     }
   }
 </script>
@@ -367,7 +481,7 @@
       bottom: 0;
       left: 0;
       right: 0;
-      background-color: #666;
+      background-color: #222;
       color: #FFFFFF;
       .top {
         height: 45px;
@@ -396,19 +510,66 @@
         }
       }
       .middle {
+        width: 100%;
+        position: absolute;
+        top: 45px;
+        bottom: 120px;
+        margin:auto;
+        overflow: hidden;
         .name {
           text-align: center;
-          font-size: 12px;
+          font-size: 14px;
           line-height: 28px;
         }
-        .cd-box {
-          margin-top: 5px;
-          text-align: center;
-          img {
-            width: 80%;
-            border: 10px solid rgba(255, 255, 255, 0.2);
-            border-radius: 50%;
+        .img-box {
+          .cd-box {
+            margin-top: 5px;
+            text-align: center;
+            img {
+              width: 80%;
+              border: 10px solid rgba(255, 255, 255, 0.2);
+              border-radius: 50%;
 
+            }
+          }
+        }
+        .lyric-box {
+          position: absolute;
+          left:100%;
+          top: 28px;
+          width: 100%;
+          height: 90%;
+          overflow: hidden;
+          .lyric-line {
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            overflow: hidden;
+            color: hsla(0,0%,100%,.5);
+            padding:0 20px;
+            text-align: center;
+            font-size: 14px;
+            line-height: 28px;
+          }
+          .currentLine{
+            color: #fff;
+          }
+        }
+        .dot-box{
+          position: absolute;
+          width: 100%;
+          bottom: 0;
+          text-align: center;
+          span{
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            background-color: #ccc;
+            border-radius: 50%;
+            &.active{
+              width: 20px;
+              background-color: #fff;
+              border-radius: 8px;
+            }
           }
         }
       }
@@ -453,11 +614,13 @@
         left: 0;
         right: 0;
         z-index: -1;
-        filter: blur(50px);
-        img {
-          width: 100%;
-          height: 100%;
-        }
+        filter: blur(20px);
+        opacity:.6;
+          img {
+            width: 100%;
+            height: 100%;
+          }
+
       }
     }
     .min-player {

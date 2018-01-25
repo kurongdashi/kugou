@@ -3,6 +3,7 @@
  */
 import jsonp from './promiseJsonp'
 import axios from 'axios'
+import {Base64} from 'js-base64'
 
  class Song{
   constructor({id,mid,name,singer,duration,album,image,url}){
@@ -21,7 +22,9 @@ import axios from 'axios'
   }
   //获取音乐歌词
   getLyric(mid){
-    return getSingerLyric(mid);
+    return getSingerLyric(mid).then(res=>{
+      return Base64.decode(res.data.lyric);
+    });
   }
 }
 export function createSong(musicData) {

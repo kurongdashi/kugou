@@ -19,14 +19,12 @@
     </div>
     <!--这个层在歌曲列表向上滚动时，跟随滚动-->
     <div class="bg-layer" ref="bgLayer"></div>
-    <div class="song-list-box">
-      <scroll :data="songs" :probe-type="3" :listen-scroll="true" @scroll="scroll">
+      <scroll :data="songs" :probe-type="3" :listen-scroll="true" @scroll="scroll" class="song-list-box">
         <song-list :songs="songs" @selectSong="selectSong"></song-list>
       </scroll>
       <div class="loading-box"v-show="!songs.length">
         <loading ></loading>
       </div>
-    </div>
   </div>
 </template>
 
@@ -220,9 +218,8 @@
       left: 0;
       bottom: 0;
       right: 0;
-      .scroll{
-        overflow: inherit;
-        top: 0;
+      .songlist{
+
       }
       .loading-box{
         margin-top: 100px;

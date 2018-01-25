@@ -37,3 +37,4 @@ export function getElementData(el,key,val) {
     }
 
 }
+export const Transform='webkit-transform,transform'
