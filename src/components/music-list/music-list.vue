@@ -19,7 +19,7 @@
     </div>
     <!--这个层在歌曲列表向上滚动时，跟随滚动-->
     <div class="bg-layer" ref="bgLayer"></div>
-      <scroll :data="songs" :probe-type="3" :listen-scroll="true" @scroll="scroll" class="song-list-box">
+      <scroll :data="songs" :probe-type="3" :listen-scroll="true" @scroll="scroll" class="song-list-box" ref="songsList">
         <song-list :songs="songs" @selectSong="selectSong"></song-list>
       </scroll>
       <div class="loading-box"v-show="!songs.length">
@@ -33,10 +33,15 @@
   import loading from '../base/loading/loading'
   import scroll from '../base/scroll/scroll'
   import {mapActions} from 'vuex'
+
+
+  import {playListMixin} from '../../common/js/mixin'
+
   //这里的高度必须和css中设置的对应，否则无法实现跟随滚动效果
   const bgImgHeight=260;
   const topTitleHeight=40;
   export default {
+    mixins:[playListMixin],
     props: {
       songs: {
         type: Array,
@@ -63,6 +68,11 @@
       }
     },
     methods: {
+        handlePlayList(playlist){
+          let bottom=playlist.length>0?'60px':'';
+          this.$refs.songsList.$el.style.bottom=bottom;
+          this.$refs.songsList.refresh();
+        },
       random(){
         this.setRandomPlay({
           list:this.songs,

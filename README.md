@@ -38,12 +38,66 @@ fastclick.attach(document.body);
     }
 ```
 ## Vue 的内部属性
+
+### 生命周期钩子
+
 1. 在vue内部去除回调钩子中定义数据外，其他属性中定义数据都会被检测，添加对应get,set方法
 ``` 
 created(){
       this.touch={};
     },
 ```
+2. mounted() 挂载后，组件被加载到vue中，回调
+3. activated() 使用keep-alive 重新激活时回调
+
+### mixins属性，用于定义类似父类的方法和属性，可以被所使用的组件继承、覆盖
+
+1.  独立一个js文件，定义mixin
+``` 
+export const playListMixin={
+  computed:{
+    ...mapGetters([
+      'playList'
+    ])
+  },
+  mounted(){
+    this.handlePlayList(this.playList);
+  },
+  //keep-alive 组件使用时重新激活，回调
+  activated(){
+    this.handlePlayList(this.playList);
+  },
+  watch:{
+    playList(newVal){
+      this.handlePlayList(newVal);
+    }
+  },
+  methods:{
+    handlePlayList(){
+      throw new Error('must implement handlePlayList method')
+    }
+  }
+}
+```
+2. 使用,使用后会把mixin中的合并到该组件中
+``` 
+import {playListMixin} from '../../common/js/mixin'
+
+export default {
+    mixins:[playListMixin],
+    ...
+    }
+```
+3. 覆盖，或者实现mixin中的方法 ,给scroll增加60px底部
+``` 
+handlePlayList(playlist){
+          let bottom=playlist.length>0?'60px':'';
+          this.$refs.songsList.$el.style.bottom=bottom;
+          this.$refs.songsList.refresh();
+        },
+
+```
+
 
 ## better-scroll 使用
 
@@ -465,16 +519,9 @@ let newArr = arr.slice();
 ```
 
 
-
-
-
-
-
-
-
 ## create-keyframe-animation 插件,配合上vue 的 transition js钩子
 [参考](http://www.mamicode.com/info-detail-1857961.html)
-###### vue的js钩子函数
+###### vue的transition 的 js钩子函数
 ``` 
   <transition name="normal"
     @enter="enter"
@@ -524,10 +571,61 @@ anim.unregisterAnimation('move');
 ## js-base64 插件对数据进行加密解密
 
  [js-base64](https://www.npmjs.com/package/js-base64)
+ 
+ 
 
 ## lyric-parser插件 对歌词解析
-
+1. 播放歌词,可以到时间了，调用回调函数 play();
 ``` 
+//播放歌词,可以到时间了，调用回调函数
+              if(this.playing){
+                  this.currentLyric.play();
+              }
 
+  
+this.currentLyric = new Lyric(lyric,(line)=>{
+                  //播放歌词回调函数
+                let lineNum=line.lineNum;
+                this.currentLineNum=lineNum;//设置当前播放行
 
+                if(lineNum>5){
+                  let el=this.$refs.lyricLine[lineNum-5];
+                  //让scroll跟随歌词播放滚动，让歌词始终在屏幕中间位置
+                  this.$refs.lyricBox.scrollToElement(el,1000);
+                }else{
+                  this.$refs.lyricBox.scrollTo(0,0,1000)
+                }
+
+                this.playLyric=line.txt;
+
+              });
+```
+
+2. 歌曲切换时(歌曲结束时也要)，要清除之前的歌词 stop()
+``` 
+ //歌曲切换时，歌词要清除之前的
+        if(this.currentLyric){
+          this.currentLyric.stop();
+        }
+
+```
+3. 歌曲 播放，暂停，时歌词也要 togglePlay()
+``` 
+ //修改播放，暂停，vuex状态
+      togglePlaying(){
+        this.setPlaying(!this.playing);
+        if(this.currentLyric){
+          this.currentLyric.togglePlay();
+        }
+      },
+
+```
+4. 拖动进度条 seek(time) ,播放结束seek(0)
+``` 
+//拖动进度条
+      onPercentChange(percent){
+        if(this.currentLyric){
+          this.currentLyric.seek(time* 1000)
+        }
+      },
 ```

@@ -1,6 +1,6 @@
 <template>
   <div class="recommend">
-    <scroll :data="singList" ref="scroll" class="listview">
+    <scroll :data="singList" ref="recommendList" class="listview">
       <div class="recommend-content">
           <!--轮播图-->
           <div class="slider-wrapper">
@@ -40,8 +40,9 @@
   import scroll from '../base/scroll/scroll'
   import loading from '../base/loading/loading'
   import * as Api from '../../common/js/jsonp'
-
+  import {playListMixin} from '../../common/js/mixin'
   export default {
+    mixins:[playListMixin],
     data(){
       return {
         slider: [],
@@ -54,6 +55,11 @@
       this._getSingList();
     },
     methods: {
+      handlePlayList(playlist){
+        let bottom=playlist.length>0?'60px':'';
+        this.$refs.recommendList.$el.style.bottom=bottom;
+
+      },
       _getData(){
        axios.get('/api/slider').then((res)=>{
           let data = res.data;

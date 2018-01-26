@@ -25,6 +25,7 @@
             <div class="cd-box">
               <img :src="currentSong.image" alt="" ref="cd" :class="cdClass">
             </div>
+              <p class="playLyric">{{playLyric}}</p>
           </div>
           <scroll  class="lyric-box" v-if="currentLyric" ref="lyricBox" :data="currentLyric.lines" >
             <div>
@@ -101,7 +102,8 @@
         tempList: null,
         currentLyric: null,
         currentLineNum:0,
-        currentShow:'cd'
+        currentShow:'cd',
+        playLyric:''
       }
     },
     created(){
@@ -137,12 +139,11 @@
       ])
     },
     methods: {
-       onTouchStart(e){
+      onTouchStart(e){
            this.touch.init=true;
            let touch=e.touches[0];
            this.touch.startX=touch.pageX;
            this.touch.startY=touch.pageY;
-
        },
       onTouchMove(e){
         if(!this.touch.init){
@@ -159,10 +160,10 @@
         let offsetWidth;
         let opacity
         if(this.currentShow==='cd'){
-           offsetWidth=Math.max(-window.innerWidth,deltaX);
+           offsetWidth=Math.min(0,Math.max(-window.innerWidth,deltaX));
            opacity=1;
         }else{
-          offsetWidth=Math.min(window.innerWidth,deltaX);
+          offsetWidth=Math.min(window.innerWidth,Math.max(0,deltaX));
           opacity=0;
         }
         //计算偏移百分比
@@ -176,13 +177,11 @@
       onTouchEnd(){
         let lyricDom=this.$refs.lyricBox.$el;
         this.$refs.lyricBox.$el.style.transform='';
-//          let left=this.currentShow==='cd'?window.innerWidth:0
-//          left+=deltaX;
-//          console.log(this.touch.percent)
 //          移动完成后需要设置left的值
           let left=0;
           if(this.currentShow==='cd'){
-              if(this.touch.percent>0.1){
+
+              if(this.touch.percent>0.3){
                   //歌词页面显示出来
                   this.currentShow='lyric';
                   left=0;
@@ -190,9 +189,9 @@
                   //歌词页面隐藏
                 left=window.innerWidth;
               }
-          }else{
-            if(this.touch.percent>0.1){
 
+          }else{
+            if(this.touch.percent>0.3){
               this.currentShow='cd';
               //cd页面显示出来
               left=window.innerWidth;
@@ -201,21 +200,28 @@
               left=0;
             }
           }
+        this.touch.percent=0;
         lyricDom.style.transition='all 300ms';
         lyricDom.style.left=`${left}px`;
         let cdShow=this.currentShow==='cd'?1:0;
         this.$refs.cdBox.style.opacity=cdShow;
       },
+      //播放结束
       end(){
         if (this.mode === playMode.loop) {
           this.loop();
         } else {
           this.next();
         }
+
       },
+      //循环播放
       loop(){
         this.$refs.audio.currentTime = 0;
         this.$refs.audio.play();
+        if(this.currentLyric){
+          this.currentLyric.seek(0);
+        }
       },
       selectMode(){
         let mode = (this.mode + 1) % 3;
@@ -240,10 +246,15 @@
         })
         this.setCurrentIndex(index);
       },
+      //拖动进度条
       onPercentChange(percent){
-        this.$refs.audio.currentTime = this.currentSong.duration * percent;
+          let time=this.currentSong.duration * percent;
+        this.$refs.audio.currentTime = time;
         if (!this.playing) {
           this.togglePlaying();
+        }
+        if(this.currentLyric){
+          this.currentLyric.seek(time* 1000)
         }
       },
       //时间修正
@@ -278,15 +289,21 @@
         if (!this.songReady) {
           return
         }
-        let index = this.currentIndex + 1;
-        if (index === this.playList.length) {
-          index = 0
+        if(this.playList.length===1){
+            this.loop();
+        }else {
+          let index = this.currentIndex + 1;
+          if (index === this.playList.length) {
+            index = 0
+          }
+          this.setCurrentIndex(index);
+          if (!this.playing) {
+            this.togglePlaying();
+          }
+          this.songReady = false;
         }
-        this.setCurrentIndex(index);
-        if (!this.playing) {
-          this.togglePlaying();
-        }
-        this.songReady = false;
+
+
       },
       //上一曲
       prev(){
@@ -294,21 +311,28 @@
         if (!this.songReady) {
           return
         }
+        if(this.playList.length===1){
+          this.loop();
+        }else{
+          let index = this.currentIndex - 1;
+          if (index === -1) {
+            index = this.playList.length - 1;
+          }
+          this.setCurrentIndex(index);
 
-        let index = this.currentIndex - 1;
-        if (index === -1) {
-          index = this.playList.length - 1;
+          if (!this.playing) {
+            this.togglePlaying();
+          }
+          this.songReady = false;
         }
-        this.setCurrentIndex(index);
 
-        if (!this.playing) {
-          this.togglePlaying();
-        }
-        this.songReady = false;
       },
       //修改播放，暂停，vuex状态
       togglePlaying(){
         this.setPlaying(!this.playing);
+        if(this.currentLyric){
+          this.currentLyric.togglePlay();
+        }
       },
       //对cd图片进行缩写，移动动画处理,动画钩子是当dom渲染时执行动画
       enter(el, done){
@@ -409,6 +433,10 @@
         if (newSong.id === oldSong.id) {
           return;
         }
+        //歌曲切换时，歌词要清除之前的
+        if(this.currentLyric){
+          this.currentLyric.stop();
+        }
         newSong.getAudioUrl(newSong.mid).then(res => {
           this.songUrl = res;
 
@@ -417,7 +445,7 @@
 
             newSong.getLyric(newSong.mid).then(lyric => {
 
-              this.currentLyric = new Lyric(lyric,(line,txt)=>{
+              this.currentLyric = new Lyric(lyric,(line)=>{
                   //播放歌词回调函数
                 let lineNum=line.lineNum;
                 this.currentLineNum=lineNum;//设置当前播放行
@@ -429,6 +457,9 @@
                 }else{
                   this.$refs.lyricBox.scrollTo(0,0,1000)
                 }
+
+                this.playLyric=line.txt;
+
               });
 
               //播放歌词,可以到时间了，调用回调函数
@@ -441,16 +472,20 @@
 
           })
 
+        }).catch(err=>{
+            this.currentLyric=null;
+            this.currentLineNum=0;
+            this.playLyric='';
         })
       },
       //通过vuex中playing状态，来真正控制播放、暂停
       playing(newPlaying){
-        this.$nextTick(() => {
+        setTimeout(() => {
           let audio = this.$refs.audio;
           if (this.songReady) {
             newPlaying ? audio.play() : audio.pause();
           }
-        })
+        },1000)
       }
     },
     components: {
@@ -532,6 +567,14 @@
 
             }
           }
+          .playLyric{
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            overflow: hidden;
+            margin-top: 40px;
+            font-size: 14px;
+            text-align: center;
+          }
         }
         .lyric-box {
           position: absolute;
@@ -566,7 +609,7 @@
             background-color: #ccc;
             border-radius: 50%;
             &.active{
-              width: 20px;
+              width: 16px;
               background-color: #fff;
               border-radius: 8px;
             }
@@ -671,7 +714,7 @@
           margin: auto;
           color: #ffff00;
           vertical-align: text-top;
-          font-size: 30px;
+          font-size: 26px;
         }
         .icon-play {
 
