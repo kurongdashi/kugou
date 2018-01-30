@@ -2,6 +2,7 @@
  * mutation : 突变，变化 ,定义具体的操作方法,操作state
  * vue提供的修改和操作数据的第三方插件，保证数据只能通过这个插件修改，传递，这样
  * 保证的数据变化和传递的可控
+ * mutation:主要是设置值，getters：是获取值
  */
 import * as types from './mutation-type'
 
@@ -27,6 +28,9 @@ const mutation={
   },
   [types.set_currentIndex](state,index){
     state.currentIndex=index;
+  },
+  [types.set_disc](state,disc){
+    state.disc=disc;
   },
 }
 

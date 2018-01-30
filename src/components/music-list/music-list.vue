@@ -166,6 +166,10 @@
           }
         }
         .title {
+          white-space: nowrap;
+          text-overflow: ellipsis;
+          overflow: hidden;
+
           font-size: 16px;
           line-height: 40px;
           color: #fff;

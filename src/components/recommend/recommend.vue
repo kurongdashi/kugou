@@ -1,6 +1,6 @@
 <template>
   <div class="recommend">
-    <scroll :data="singList" ref="recommendList" class="listview">
+    <scroll :data="singList" ref="recommendList" class="listview" >
       <div class="recommend-content">
           <!--轮播图-->
           <div class="slider-wrapper">
@@ -15,7 +15,7 @@
           <!-- 推荐列表-->
           <div class="recommend-list">
             <h2 class="title">热门推荐歌曲</h2>
-            <div class="list-item" v-for="item in singList">
+            <div class="list-item" v-for="item in singList" @click="selectItem(item)">
               <div class="img-box">
                 <img v-lazy="item.imgurl" alt="">
               </div>
@@ -31,6 +31,7 @@
           </div>
       </div>
     </scroll>
+    <router-view></router-view>
   </div>
 </template>
 
@@ -39,8 +40,9 @@
   import slider from '../base/slider/slider'
   import scroll from '../base/scroll/scroll'
   import loading from '../base/loading/loading'
-  import * as Api from '../../common/js/jsonp'
+  import * as mJsonp from '../../common/js/jsonp'
   import {playListMixin} from '../../common/js/mixin'
+  import {mapMutations} from 'vuex'
   export default {
     mixins:[playListMixin],
     data(){
@@ -51,24 +53,31 @@
       }
     },
     created(){
-      this._getData();
+      this._getSlider();
       this._getSingList();
     },
     methods: {
+      selectItem(item){
+//          console.log(item)
+          this.$router.push({
+              path:`/recommend/${item.dissid}`
+          })
+        this.setDisc(item);
+      },
       handlePlayList(playlist){
         let bottom=playlist.length>0?'60px':'';
         this.$refs.recommendList.$el.style.bottom=bottom;
 
       },
-      _getData(){
-       axios.get('/api/slider').then((res)=>{
+      _getSlider(){
+        mJsonp.getSlider().then((res)=>{
           let data = res.data;
-          this.slider = data.data.slider;
+          this.slider = data.slider;
         });
 
       },
       _getSingList(){
-        Api.getData('/api/singlist').then((res) => {
+        mJsonp.getSingList().then((res) => {
           let data = res.data;
           this.singList=data.list;
 
@@ -77,9 +86,12 @@
       imgload(){
         if (!this.loadFlag) {
           this.loadFlag = true;
-          this.$refs.scroll.refresh();
+          this.$refs.recommendList.refresh();
         }
-      }
+      },
+      ...mapMutations({
+          setDisc:'set_disc'
+      })
 
     },
     components: {

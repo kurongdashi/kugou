@@ -15,6 +15,7 @@ import {playMode} from '../common/js/config'
   //播放模式，随机播放，顺序播放，列表循环
   mode:playMode.sequence,
 
-  currentIndex:-1
+  currentIndex:-1,
+   disc:{},
 }
 export  default state;

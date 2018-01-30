@@ -571,6 +571,7 @@
             white-space: nowrap;
             text-overflow: ellipsis;
             overflow: hidden;
+            padding: 0 20px;
             margin-top: 40px;
             font-size: 14px;
             text-align: center;

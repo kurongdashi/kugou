@@ -9,7 +9,7 @@ import mutations from './mutation'
 import state from './state'
 import createLogger from 'vuex/dist/logger'
 
-
+//vue使用vuex
 Vue.use(Vuex);
 
 const debug=process.env.NODE_ENV!=='production';

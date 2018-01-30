@@ -7,7 +7,7 @@
 
 <script type="text/ecmascript-6">
   import Singer from '../../common/js/Singer'
-  import * as Api from '../../common/js/jsonp'
+  import * as mJsonp from '../../common/js/jsonp'
   import listview from '../base/listview/listview'
   import singerDetail from '../singer-detail/singer-detail'
 
@@ -39,7 +39,7 @@
                 this.setSinger(item);
             },
           _getSingerList(){
-            Api.getData('/api/singerlist').then(res=>{
+            mJsonp.getSingerList().then(res=>{
                   let data=res.data;
               //需要筛选数据，拼装成 hot,list 数据
 //              console.log(data);

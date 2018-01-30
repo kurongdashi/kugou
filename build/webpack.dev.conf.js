@@ -39,17 +39,7 @@ const devWebpackConfig = merge(baseWebpackConfig, {
             origin:'https://m.y.qq.com',
             referer:'https://m.y.qq.com/',
           },
-          params:{
-            g_tk:5381,
-            uin:0,
-            format:'json',
-            inCharset:'utf-8',
-            outCharset:'utf-8',
-            notice:0,
-            platform:'h5',
-            needNewCode:1,
-            _:new Date().getTime()
-          }
+          params:req.query
         }).then((response)=>{
           res.json(response.data);
 
@@ -65,24 +55,7 @@ const devWebpackConfig = merge(baseWebpackConfig, {
           headers:{
             referer:'https://y.qq.com/portal/playlist.html',
           },
-          params:{
-            picmid:1,
-            rnd:Math.random(),
-            g_tk:5381,
-            jsonpCallback:'getApiData',
-            loginUin:0,
-            hostUin:0,
-            format:'jsonp',
-            inCharset:'utf8',
-            outCharset:'utf-8',
-            notice:0,
-            platform:'yqq',
-            needNewCode:0,
-            categoryId:10000000,
-            sortId:5,
-            sin:0,
-            ein:29,
-          }
+          params:req.query
         }).then((response)=>{
           res.json(response.data);
 
@@ -98,23 +71,7 @@ const devWebpackConfig = merge(baseWebpackConfig, {
           headers:{
             referer:'https://y.qq.com/portal/singer_list.html',
           },
-          params:{
-            channel:'singer',
-            page:'list',
-            key:'all_all_all',
-            pagesize:100,
-            pagenum:1,
-            g_tk:5381,
-            jsonpCallback:'getApiData',
-            loginUin:0,
-            hostUin:0,
-            format:'jsonp',
-            inCharset:'utf8',
-            outCharset:'utf-8',
-            notice:0,
-            platform:'yqq',
-            needNewCode:0,
-          }
+          params:req.query
         }).then((response)=>{
           res.json(response.data);
 
@@ -123,7 +80,7 @@ const devWebpackConfig = merge(baseWebpackConfig, {
         })
 
       })
-
+      //获取歌词
       app.get('/api/lyric',(req,res)=>{
         let url = 'https://c.y.qq.com/lyric/fcgi-bin/fcg_query_lyric_new.fcg';
         axios.get(url,{
@@ -131,6 +88,7 @@ const devWebpackConfig = merge(baseWebpackConfig, {
             referer:'https://y.qq.com/portal/player.html'
           },
           params:req.query
+
         }).then(response=>{
           let ret=response.data;
           let reg=/^\w+\(({[^()]+})\)$/;
@@ -141,6 +99,38 @@ const devWebpackConfig = merge(baseWebpackConfig, {
             }
           }
             res.json()
+        }).catch(err=>{
+          console.log('错误类型：'+err)
+        })
+      })
+      //推荐页面item详情
+      app.get('/api/itemdetail',(req,res)=>{
+        let url = 'https://c.y.qq.com/qzone/fcg-bin/fcg_ucc_getcdinfo_byids_cp.fcg';
+        axios.get(url,{
+          headers:{
+            referer:`https://y.qq.com/n/yqq/playlist/${req.query.disstid}.html`
+          },
+          params:req.query
+
+        }).then(response=>{
+          res.json(response.data);
+        }).catch(err=>{
+          console.log('错误类型：'+err)
+        })
+      })
+
+      //排行页面列表
+      app.get('/api/rank',(req,res)=>{
+        let url = 'https://c.y.qq.com/v8/fcg-bin/fcg_myqq_toplist.fcg';
+        axios.get(url,{
+          headers:{
+            origin:'https://m.y.qq.com',
+            referer:'https://m.y.qq.com/'
+          },
+          params:req.query
+
+        }).then(response=>{
+          res.json(response.data);
         }).catch(err=>{
           console.log('错误类型：'+err)
         })

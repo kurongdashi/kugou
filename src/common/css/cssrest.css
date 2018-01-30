@@ -112,3 +112,11 @@ ul{
 h1, h2, h3, h4, h5, h6{
   font-weight: 400;
 }
+
+/*文字缩略*/
+.text-ellipsis{
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+
+}

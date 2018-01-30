@@ -112,4 +112,16 @@ function getSingerLyric(mid) {
   });
 
 }
+export  function getNormalSong(list){
+  let songs=[];
 
+  list.forEach((musicData)=>{
+    if(musicData.songmid && musicData.albummid){
+      let song=createSong(musicData);
+      songs.push(song);
+    }
+
+  })
+  return songs
+
+}
