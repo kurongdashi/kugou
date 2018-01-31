@@ -1,3 +1,4 @@
+<!-- recommend 详情页-->
 <template>
   <transition name="slider">
     <music-list :songs="songs" :title="title" :bgImg="bgImg"></music-list>

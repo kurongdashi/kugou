@@ -16,4 +16,5 @@ export const set_playMode='set_playMode';
 export const set_currentIndex='set_currentIndex';
 
 export const set_disc='set_disc';
+export const set_rankItem='set_rankItem'
 

@@ -32,6 +32,9 @@ const mutation={
   [types.set_disc](state,disc){
     state.disc=disc;
   },
+  [types.set_rankItem](state,item){
+    state.rankItem=item;
+  },
 }
 
 export default  mutation

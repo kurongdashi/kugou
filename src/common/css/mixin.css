@@ -1,0 +1,43 @@
+/*
+Error: Invalid GBK character "\xE5"
+        on line 4 of mixin.scss
+
+1: 
+2: @mixin bg-img($url){
+3:   background-image: url($url +"@2x.png");
+4:   //webkit 内核的和非webkit内核的浏览器，设备像素比
+5:   @media (-webkit-min-device-pixel-ratio: 3),(min-device-pixel-ratio: 3){
+6:     background-image: url($url +"@3x.png");
+7:   }
+8: }
+
+Backtrace:
+mixin.scss:4
+C:/Ruby24-x64/lib/ruby/gems/2.4.0/gems/sass-3.5.3/lib/sass/util.rb:1048:in `rescue in block in find_encoding_error'
+C:/Ruby24-x64/lib/ruby/gems/2.4.0/gems/sass-3.5.3/lib/sass/util.rb:1045:in `block in find_encoding_error'
+C:/Ruby24-x64/lib/ruby/gems/2.4.0/gems/sass-3.5.3/lib/sass/util.rb:1044:in `each'
+C:/Ruby24-x64/lib/ruby/gems/2.4.0/gems/sass-3.5.3/lib/sass/util.rb:1044:in `each_with_index'
+C:/Ruby24-x64/lib/ruby/gems/2.4.0/gems/sass-3.5.3/lib/sass/util.rb:1044:in `find_encoding_error'
+C:/Ruby24-x64/lib/ruby/gems/2.4.0/gems/sass-3.5.3/lib/sass/util.rb:778:in `rescue in check_sass_encoding'
+C:/Ruby24-x64/lib/ruby/gems/2.4.0/gems/sass-3.5.3/lib/sass/util.rb:774:in `check_sass_encoding'
+C:/Ruby24-x64/lib/ruby/gems/2.4.0/gems/sass-3.5.3/lib/sass/engine.rb:444:in `check_encoding!'
+C:/Ruby24-x64/lib/ruby/gems/2.4.0/gems/sass-3.5.3/lib/sass/engine.rb:400:in `_to_tree'
+C:/Ruby24-x64/lib/ruby/gems/2.4.0/gems/sass-3.5.3/lib/sass/engine.rb:389:in `_render_with_sourcemap'
+C:/Ruby24-x64/lib/ruby/gems/2.4.0/gems/sass-3.5.3/lib/sass/engine.rb:307:in `render_with_sourcemap'
+C:/Ruby24-x64/lib/ruby/gems/2.4.0/gems/sass-3.5.3/lib/sass/plugin/compiler.rb:462:in `update_stylesheet'
+C:/Ruby24-x64/lib/ruby/gems/2.4.0/gems/sass-3.5.3/lib/sass/plugin/compiler.rb:215:in `block in update_stylesheets'
+C:/Ruby24-x64/lib/ruby/gems/2.4.0/gems/sass-3.5.3/lib/sass/plugin/compiler.rb:209:in `each'
+C:/Ruby24-x64/lib/ruby/gems/2.4.0/gems/sass-3.5.3/lib/sass/plugin/compiler.rb:209:in `update_stylesheets'
+C:/Ruby24-x64/lib/ruby/gems/2.4.0/gems/sass-3.5.3/lib/sass/plugin.rb:82:in `update_stylesheets'
+C:/Ruby24-x64/lib/ruby/gems/2.4.0/gems/sass-3.5.3/lib/sass/exec/sass_scss.rb:340:in `watch_or_update'
+C:/Ruby24-x64/lib/ruby/gems/2.4.0/gems/sass-3.5.3/lib/sass/exec/sass_scss.rb:51:in `process_result'
+C:/Ruby24-x64/lib/ruby/gems/2.4.0/gems/sass-3.5.3/lib/sass/exec/base.rb:52:in `parse'
+C:/Ruby24-x64/lib/ruby/gems/2.4.0/gems/sass-3.5.3/lib/sass/exec/base.rb:19:in `parse!'
+C:/Ruby24-x64/lib/ruby/gems/2.4.0/gems/sass-3.5.3/bin/scss:13:in `<top (required)>'
+C:/Ruby24-x64/bin/scss:23:in `load'
+C:/Ruby24-x64/bin/scss:23:in `<main>'
+*/
+body:before {
+  white-space: pre;
+  font-family: monospace;
+  content: "Error: Invalid GBK character \"\xE5\"\A         on line 4 of mixin.scss\A \A 1: \A 2: @mixin bg-img($url){\A 3:   background-image: url($url +\"@2x.png\");\A 4:   //webkit 内核的和非webkit内核的浏览器，设备像素比\A 5:   @media (-webkit-min-device-pixel-ratio: 3),(min-device-pixel-ratio: 3){\A 6:     background-image: url($url +\"@3x.png\");\A 7:   }\A 8: }"; }

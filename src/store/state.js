@@ -17,5 +17,6 @@ import {playMode} from '../common/js/config'
 
   currentIndex:-1,
    disc:{},
+   rankItem:{}
 }
 export  default state;

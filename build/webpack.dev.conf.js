@@ -136,6 +136,39 @@ const devWebpackConfig = merge(baseWebpackConfig, {
         })
       })
 
+      //排行页面列表item详情
+      app.get('/api/rankdetail',(req,res)=>{
+        let url = 'https://c.y.qq.com/v8/fcg-bin/fcg_v8_toplist_cp.fcg';
+        axios.get(url,{
+          headers:{
+            origin:'https://m.y.qq.com',
+            referer:'https://m.y.qq.com',
+          },
+          params:req.query
+
+        }).then(response=>{
+          res.json(response.data);
+        }).catch(err=>{
+          console.log('错误类型：'+err)
+        })
+      })
+
+      //搜索页面，热门搜索
+      app.get('/api/search',(req,res)=>{
+        let url = 'https://c.y.qq.com/splcloud/fcgi-bin/gethotkey.fcg';
+        axios.get(url,{
+          headers:{
+            origin:'https://m.y.qq.com',
+          },
+          params:req.query
+
+        }).then(response=>{
+          res.json(response.data);
+        }).catch(err=>{
+          console.log('错误类型：'+err)
+        })
+      })
+
 
     },
     clientLogLevel: 'warning',

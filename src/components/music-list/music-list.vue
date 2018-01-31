@@ -4,14 +4,15 @@
     <div class="bg-img-box"ref="bgImgBox">
       <div class="title-box">
         <div class="back-icon" @click="back">
-          <img src="./back.png" alt="" class="icon">
+          <span class="icon-back icon"></span>
         </div>
         <h2 class="title" v-html="title"></h2>
       </div>
       <div class="bg-img" :style="bgStyle" ref="bgImg">
 
         <div class="play-box" v-show="randomPlay" @click="random">
-          <img src="./play.png" alt="" class="icon"><span class="text">随机播放全部</span>
+          <span class="icon-play icon"></span>
+          <span class="text">随机播放全部</span>
         </div>
         <div class="filter"></div>
       </div>
@@ -20,9 +21,9 @@
     <!--这个层在歌曲列表向上滚动时，跟随滚动-->
     <div class="bg-layer" ref="bgLayer"></div>
       <scroll :data="songs" :probe-type="3" :listen-scroll="true" @scroll="scroll" class="song-list-box" ref="songsList">
-        <song-list :songs="songs" @selectSong="selectSong"></song-list>
+        <song-list :songs="songs" @selectSong="selectSong" :rank="rank"></song-list>
       </scroll>
-      <div class="loading-box"v-show="!songs.length">
+      <div class="loading-box"v-show="!songs.length>0">
         <loading ></loading>
       </div>
   </div>
@@ -54,6 +55,10 @@
       bgImg: {
         type: String,
         default: ''
+      },
+      rank:{
+        type:Boolean,
+        default:false
       }
     },
     data(){
@@ -152,17 +157,14 @@
         z-index:11;
         display: flex;
         .back-icon {
-          display: flex;
+          flex: 40px 0 0;
           width: 40px;
           height: 40px;
           text-align: center;
           line-height: 40px;
           .icon {
-            margin: auto;
-            display: inline-block;
-            width: 20px;
-            height: 20px;
-            background: url("./back.png") no-repeat center;
+            font-size: 22px;
+            color: #ffff00;
           }
         }
         .title {
@@ -208,10 +210,11 @@
           font-size: 0;
           .icon{
             vertical-align: top;
-            width: 16px;
-            height: 16px;
+           font-size: 16px;
+            color: #ffff00;
           }
           .text{
+            vertical-align: top;
             display: inline-block;
             line-height: 16px;
             margin-left: 10px;

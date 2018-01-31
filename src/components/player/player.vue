@@ -10,7 +10,7 @@
       <div class="normal-player" v-show="fullScreen">
         <div class="top">
           <div class="down" @click="close">
-            <img src="./down.png" alt="">
+            <span class="icon-back icon"></span>
           </div>
           <h2 class="title" v-html="currentSong.name"></h2>
         </div>
@@ -519,17 +519,17 @@
       background-color: #222;
       color: #FFFFFF;
       .top {
-        height: 45px;
         display: flex;
         font-size: 0;
         .down {
-          display: flex;
           height: 40px;
           width: 40px;
-          img {
-            margin: auto;
-            width: 20px;
-            height: 20px;
+          text-align: center;
+          line-height: 40px;
+          transform: rotate(-90deg);
+          .icon:before{
+            font-size: 22px;
+            color: #ffff00;
           }
         }
         .title {

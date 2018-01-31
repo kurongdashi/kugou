@@ -24,5 +24,5 @@ export const disc=state=>{
   return state.disc;
 }
 
-
+export const rankItem=state=>state.rankItem;
 
