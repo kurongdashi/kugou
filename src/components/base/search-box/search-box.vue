@@ -7,11 +7,12 @@
 </template>
 
 <script type="text/ecmascript-6">
+
     export default {
         props:{
           placeholder:{
               type:String,
-              default:'搜索歌曲，歌手',
+              default:'搜索歌曲、歌手',
           }
         },
       data(){
@@ -37,11 +38,9 @@
 
 <style lang="scss" rel="stylesheet/scss">
   .search-box{
-    width: 80%;
     padding:5px;
     background-color: #e1e1e1;
     border-radius: 3px;
-    margin:5px auto;
     display: flex;
     .icon-box{
       width: 40px;

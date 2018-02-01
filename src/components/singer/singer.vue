@@ -22,7 +22,8 @@
       mixins:[playListMixin],
         data(){
           return{
-              singerList:[]
+              singerList:[],
+              tempList:[]
           }
         },
         created(){
@@ -39,12 +40,18 @@
                 this.setSinger(item);
             },
           _getSingerList(){
-            mJsonp.getSingerList().then(res=>{
-                  let data=res.data;
-              //需要筛选数据，拼装成 hot,list 数据
-//              console.log(data);
-                let map=this._resetData(data.list);
-                this.singerList=map;
+            mJsonp.getSingerList(1).then(res1=>{
+                  let temp1=res1.data.list;
+                mJsonp.getSingerList(2).then(res2=>{
+                  let temp2=res2.data.list;
+                  temp1=temp1.concat(temp2);
+                  let map=this._resetData(temp1);
+//                  console.log(temp1);
+                  this.singerList=map;
+
+                })
+
+
             });
           },
           /**

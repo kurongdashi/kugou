@@ -81,14 +81,14 @@ export function getSingList() {
  * 歌手页面获取歌手列表
  * @return {promise}
  */
-export function getSingerList() {
+export function getSingerList(num) {
   let url = '/api/singerlist';
   let data ={
     channel:'singer',
     page:'list',
     key:'all_all_all',
     pagesize:100,
-    pagenum:1,
+    pagenum:num,
     g_tk:5381,
     jsonpCallback:'getApiData',
     loginUin:0,
@@ -132,7 +132,10 @@ export function getItemDetail(distsid) {
   return getData(url,data);
 
 }
-
+/**
+ * 排行页面获取数据
+ * @return {*}
+ */
 export function getRank() {
 
   let url='/api/rank';
@@ -152,7 +155,11 @@ export function getRank() {
   });
 
 }
-
+/**
+ * 排行详情页面
+ * @param id
+ * @return {*}
+ */
 export function getRankDetail(id) {
   let url='/api/rankdetail';
   let data ={
@@ -191,6 +198,40 @@ export function getHotSearch() {
     notice:0,
     platform:'h5',
     needNewCode:1,
+    _:new Date().getTime(),
+  };
+  return axios.get(url,{
+    params:data
+  });
+
+}
+/**
+ *  检索关键词，获取内容
+ * @return {*}
+ */
+export function getSearchContent(query,page=1) {
+  let url='/api/searchContent';
+  let data ={
+    g_tk:5381,
+    uin:0,
+    format:'json',
+    inCharset:'utf-8',
+    outCharset:'utf-8',
+    notice:0,
+    platform:'h5',
+    needNewCode:1,
+    w:query,
+    zhidaqu:1,
+    catZhida:1,
+    t:0,
+    flag:1,
+    ie:'utf-8',
+    sem:1,
+    aggr:0,
+    perpage:20,
+    n:20,
+    p:page,
+    remoteplace:'txt.mqq.all',
     _:new Date().getTime(),
   };
   return axios.get(url,{

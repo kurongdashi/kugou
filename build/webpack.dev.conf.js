@@ -168,6 +168,21 @@ const devWebpackConfig = merge(baseWebpackConfig, {
           console.log('错误类型：'+err)
         })
       })
+      //搜索页面，热门搜索
+      app.get('/api/searchContent',(req,res)=>{
+        let url = 'https://c.y.qq.com/soso/fcgi-bin/search_for_qq_cp';
+        axios.get(url,{
+          headers:{
+            origin:'https://m.y.qq.com',
+          },
+          params:req.query
+
+        }).then(response=>{
+          res.json(response.data);
+        }).catch(err=>{
+          console.log('错误类型：'+err)
+        })
+      })
 
 
     },
