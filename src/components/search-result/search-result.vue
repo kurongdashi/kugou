@@ -1,7 +1,7 @@
 <template>
-      <scroll :data="resultList" class="result-list" ref="listview">
+      <scroll :data="resultList" class="result-list" ref="resultList" @scrollToEnd="searchMore" :pullup="pullup">
       <ul class="search-result">
-        <li class="search-item" v-for="item in resultList">
+        <li class="search-item" v-for="item in resultList" @click="selectItem(item)">
             <div class="img-box">
               <i :class="getIcon(item)" class="icon"></i>
             </div>
@@ -11,14 +11,19 @@
             </div>
         </li>
       </ul>
+        <router-view></router-view>
+        <loading v-show="loadingMore" class="loading"></loading>
       </scroll>
+
 </template>
 
 <script type="text/ecmascript-6">
   import {getSearchContent} from '../../common/js/jsonp'
   import scroll from '../base/scroll/scroll'
   import {playListMixin} from '../../common/js/mixin'
+  import loading from '../base/loading/loading'
   const SINGER='singer';
+  import {Singer} from '../../common/js/Singer'
     export default {
       mixins:[playListMixin],
       props:{
@@ -29,21 +34,47 @@
       },
       data(){
         return{
-            resultList:[]
+            resultList:[],
+            page:1,
+            pullup:true,
+            loadingMore:false,
+            hasMore:true,
         }
       },
       computed:{
 
       },
       methods:{
+          selectItem(item){
+              if(item.type===SINGER){
+
+              }
+          },
+          searchMore(){
+              if(!this.hasMore){
+                  return;
+              }
+              this.page++;
+              this.loadingMore=true;
+              getSearchContent(this.query,this.page).then(res=>{
+              let data=res.data.data;
+              this.loadingMore=false;
+
+                this.resultList=this.resultList.concat(this._getResult(data));
+            });
+          },
         handlePlayList(playlist){
           let bottom=playlist.length>0?'60px':'';
-          this.$refs.listview.$el.style.bottom=bottom;
+//          this.$refs.resultList.$el.style.bottom=bottom;
 
         },
         _getResult(data){
           let ret=[];
           let song=data.song;
+          this.$refs.resultList.scrollTo(0,0);
+
+          this.hasMore=this._checkMore(song);
+
           let zhida=data.zhida;
           if(zhida.singerid){
             zhida.type=SINGER;
@@ -52,8 +83,12 @@
           if(song.list.length>0){
               ret=ret.concat(song.list)
           }
-          console.log(ret)
+//          console.log(ret)
           return ret;
+        },
+        //检查是否还有多余的数据
+        _checkMore(song){
+            return this.page <= Math.ceil(song.totalnum/song.curnum);
         },
         getIcon(item){
           return item.type===SINGER?'icon-mine':'icon-music';
@@ -68,16 +103,16 @@
       },
       watch:{
           query(newQuery){
-              console.log('zou---')
             getSearchContent(this.query).then(res=>{
               let data=res.data.data;
+              console.log(data)
               this.resultList=this._getResult(data);
 
             });
           }
       },
       components:{
-        scroll,
+        scroll,loading
       }
 
     }
@@ -92,8 +127,16 @@
     left: 0;
     right: 0;
     margin:auto;
+    .loading{
+      position: absolute;
+      bottom: 10px;
+      left: 0;
+      right: 0;
+      margin:auto;
+    }
   }
   .search-result{
+    background-color: #e2e2e2;
     .search-item{
       display: flex;
       padding:5px 0;
@@ -112,11 +155,12 @@
         flex: 1;
         line-height: 24px;
         .title{
-          font-size: 16px;
+          font-size: 14px;
+          color: #666;
         }
         .text{
           font-size: 12px;
-          color: #3c3c3c;
+          color: #999;
         }
 
       }

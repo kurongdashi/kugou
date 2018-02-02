@@ -68,7 +68,7 @@
 <style lang="scss" rel="stylesheet/scss">
   .search{
     .search-wrapper{
-      margin: 10px;
+      margin: 10px 0;
     }
     .hot-word{
       padding:0 10%;

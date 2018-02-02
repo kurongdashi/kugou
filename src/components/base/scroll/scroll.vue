@@ -50,8 +50,10 @@
                 vue.$emit('scroll',pos);
             });
         }
+        //如果下拉到底部就派发一个事件
         if(this.pullup){
             this.scroll.on('scrollEnd',()=>{
+//                console.log('end')
               if(this.scroll.y <= (this.scroll.maxScrollY+50) ){
                   this.$emit('scrollToEnd');
               }

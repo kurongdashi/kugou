@@ -209,7 +209,7 @@ export function getHotSearch() {
  *  检索关键词，获取内容
  * @return {*}
  */
-export function getSearchContent(query,page=1) {
+export function getSearchContent(query,page=1,perpage=20) {
   let url='/api/searchContent';
   let data ={
     g_tk:5381,
