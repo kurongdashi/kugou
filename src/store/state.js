@@ -2,6 +2,8 @@
  * state 用于定义要传递或者要修改的数据对象
  */
 import {playMode} from '../common/js/config'
+import {loadSearch} from '../common/js/cache'
+
  const state={
   singer:{},
   //播放状态
@@ -17,6 +19,7 @@ import {playMode} from '../common/js/config'
 
   currentIndex:-1,
    disc:{},
-   rankItem:{}
+   rankItem:{},
+   searchHistory:loadSearch()
 }
 export  default state;

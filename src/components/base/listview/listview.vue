@@ -10,7 +10,7 @@
               <img v-lazy="item.avatar" alt="">
             </div>
             <div class="text-box">
-              <h3 class="name">{{item.name}}</h3>
+              <h3 class="name text-ellipsis">{{item.name}}</h3>
             </div>
           </li>
         </ul>
@@ -208,6 +208,7 @@
         .text-box {
           flex: 1;
           padding-left: 20px;
+          overflow: hidden;
           .name {
             line-height: 60px;
             font-size: 16px;
@@ -227,14 +228,14 @@
       .list-box {
         width: 100px;
         margin: auto;
-        padding: 10px 0;
+        padding: 8% 0;
         background-color: rgba(0, 0, 0, 0.5);
         border-radius: 15px;
         .text {
           color: #eee;
           text-align: center;
-          line-height: 20px;
-          font-size: 12px;
+          line-height: 15px;
+          font-size: 10px;
           &.current {
             color: gold;
           }

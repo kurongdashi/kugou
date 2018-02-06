@@ -8,7 +8,7 @@ import * as types from './mutation-type'
 
 const mutation={
   //定义set对象方法，传递到state
-  [types.SET_SINGER](state,singer){
+  [types.set_singer](state,singer){
     state.singer=singer;
   },
   [types.set_playing](state,flag){
@@ -34,6 +34,9 @@ const mutation={
   },
   [types.set_rankItem](state,item){
     state.rankItem=item;
+  },
+  [types.set_searchHistory](state,list){
+    state.searchHistory=list;
   },
 }
 

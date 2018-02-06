@@ -20,3 +20,20 @@ export function shuffle(list) {
 function getRandom(min,max) {
   return  Math.floor(Math.random()*(max-min+1)+min);
 }
+// 函数节流，延时调用,包装原生函数返回
+export function debounce(func,delay) {
+  let timer
+
+  return function (...args) {
+
+    if(timer){
+      clearTimeout(timer)
+    }
+    //在延时期间，如果再次进入则清除之前的timer
+    timer=setTimeout(()=>{
+
+      func.apply(this,args);
+
+    },delay)
+  }
+}

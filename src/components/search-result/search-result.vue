@@ -1,4 +1,5 @@
 <template>
+  <div>
       <scroll :data="resultList" class="result-list" ref="resultList" @scrollToEnd="searchMore" :pullup="pullup">
       <ul class="search-result">
         <li class="search-item" v-for="item in resultList" @click="selectItem(item)">
@@ -11,10 +12,10 @@
             </div>
         </li>
       </ul>
-        <router-view></router-view>
         <loading v-show="loadingMore" class="loading"></loading>
       </scroll>
-
+    <router-view></router-view>
+  </div>
 </template>
 
 <script type="text/ecmascript-6">
@@ -23,7 +24,12 @@
   import {playListMixin} from '../../common/js/mixin'
   import loading from '../base/loading/loading'
   const SINGER='singer';
-  import {Singer} from '../../common/js/Singer'
+  import Singer from '../../common/js/Singer'
+
+  import {createSong} from '../../common/js/Song'
+  import {mapMutations} from 'vuex'
+  import {mapActions} from 'vuex'
+
     export default {
       mixins:[playListMixin],
       props:{
@@ -46,9 +52,24 @@
       },
       methods:{
           selectItem(item){
+
               if(item.type===SINGER){
 
+               let singer=new Singer({
+                      id:item.singerid,
+                      avatarId:item.singermid,
+                      name:item.singername,
+                  })
+                this.$router.push({
+                    path:`/search/${singer.id}`
+                });
+                this.setSinger(singer)
+              }else{
+                this.insertSong(createSong(item));
               }
+            this.$emit('selectItem')
+
+
           },
           searchMore(){
               if(!this.hasMore){
@@ -100,12 +121,19 @@
           return item.type===SINGER?`单曲：${item.songnum} &nbsp; 专辑：${item.albumnum}`:item.albumname;
         },
 
+        ...mapMutations({
+            setSinger:'set_singer'
+        }),
+        ...mapActions({
+            insertSong:'insertSong',
+
+        })
       },
       watch:{
           query(newQuery){
             getSearchContent(this.query).then(res=>{
               let data=res.data.data;
-              console.log(data)
+//              console.log(data)
               this.resultList=this._getResult(data);
 
             });

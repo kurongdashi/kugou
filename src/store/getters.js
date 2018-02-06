@@ -26,3 +26,5 @@ export const disc=state=>{
 
 export const rankItem=state=>state.rankItem;
 
+export const searchHistory=state=>state.searchHistory;
+

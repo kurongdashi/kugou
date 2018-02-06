@@ -115,7 +115,7 @@
           },
 
           ...mapMutations({
-            setSinger:'SET_SINGER'
+            setSinger:'set_singer'
           })
         },
       components:{

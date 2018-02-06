@@ -460,6 +460,32 @@ data(){
             },20)
         },
 ```
+
+#### 节流函数使用
+``` 
+export function debounce(func,delay) {
+  let timer
+
+  return function (...args) {
+
+    if(timer){
+      clearTimeout(timer)
+    }
+    //在延时期间，如果再次进入则清除之前的timer
+    timer=setTimeout(()=>{
+
+      func.apply(this,args);
+
+    },delay)
+  }
+}
+
+
+```
+
+
+
+
 ### js 三大家族 offset、client、screen
 [三大家族](http://blog.csdn.net/k491022087/article/details/52629743)
 
@@ -476,16 +502,25 @@ data(){
 
 ## Vuex 
 
+
+[参考](https://vuex.vuejs.org/zh-cn)
+
 ### vue组件传递数据的中转站，不再需要显示的在每个组件上传递
 1. 文件组成
 store目录下有
-index.js vuex的状态管理入口文件
-state.js  定义状态文件
-mutation.js 操作单个状态
+``` 
+index.js          vuex的状态管理入口文件
+state.js          定义状态文件
+mutation.js       设置值
 mutation-types.js 操作名称
-getter.js  获取state
-actions.js  一次操作多个mutation的封装
+getter.js         获取state
+actions.js        修改值
 
+```
+
+2. store 下入口文件 index.js
+``` 
+```
 
 2. 使用,在main.js文件中
 ``` 

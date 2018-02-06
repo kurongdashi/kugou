@@ -7,6 +7,8 @@
 </template>
 
 <script type="text/ecmascript-6">
+  import {debounce} from '../../../common/js/utils'
+
 
     export default {
         props:{
@@ -21,9 +23,9 @@
         }
       },
       created(){
-        this.$watch('query',(newQuery)=>{
-          this.$emit('query',newQuery);
-        })
+        this.$watch('query',debounce((newQuery)=>{
+          this.$emit('query',newQuery)
+        },200))
       },
       methods:{
         clear(){
@@ -31,7 +33,8 @@
         },
         setQuery(world){
             this.query=world;
-        }
+
+        },
       }
     }
 </script>
