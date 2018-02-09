@@ -60,6 +60,8 @@
       </div>
 
     </transition>
+    <!--播放列表-->
+
 
     <transition name="min">
       <div class="min-player" v-show="!fullScreen" @click="open">
@@ -72,11 +74,13 @@
         </div>
         <div class="play-ctrl">
           <span :class="miniIcon" @click.stop="togglePlaying"></span>
-          <span class="icon-playlist"></span>
+          <span class="icon-playlist" @click.stop="togglePlayList"></span>
         </div>
       </div>
     </transition>
+      <play-list ref="playList"></play-list>
     <audio :src="songUrl" ref="audio" @canplay="canplay" @error="error" @timeupdate="update" @ended="end"></audio>
+
   </div>
 </template>
 
@@ -92,6 +96,7 @@
   import Lyric from 'lyric-parser'
   import scroll from '../base/scroll/scroll'
   import {Transform} from '../../common/js/dom'
+  import playList from '../play-list/play-list'
 
   export default {
     data(){
@@ -103,7 +108,7 @@
         currentLyric: null,
         currentLineNum:0,
         currentShow:'cd',
-        playLyric:''
+        playLyric:'',
       }
     },
     created(){
@@ -139,6 +144,9 @@
       ])
     },
     methods: {
+      togglePlayList(){
+          this.$refs.playList.show();
+      },
       onTouchStart(e){
            this.touch.init=true;
            let touch=e.touches[0];
@@ -489,7 +497,7 @@
       }
     },
     components: {
-      progressBar, progressCircle, scroll
+      progressBar, progressCircle, scroll,playList
     }
   }
 </script>
@@ -722,6 +730,14 @@
         }
 
       }
+    }
+    .play-list-wrapper{
+      position: absolute;
+      z-index:100;
+      /*top:0;*/
+      bottom: 0;
+      right: 0;
+      left: 0;
     }
 
   }

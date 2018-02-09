@@ -51,16 +51,7 @@ export const insertSong=function ({commit,state},song) {
     //已经存在了，就不做操作，直接播放歌曲
     currentIndex=index;
   }else{
-    //不存在就，将当前歌曲插入到播放列表中
-    let start ;
-    //如果原本的播放列表为空
-    if(playList.length>0){
-      start=playList.length-1;
-    }else{
-      start=0;
-    }
-    playList.splice(start,0,song);
-
+    playList.push(song);
     currentIndex=playList.length-1;
   }
   //==========顺序列表==========
@@ -69,15 +60,7 @@ export const insertSong=function ({commit,state},song) {
   if(fsIndex>-1){
     //什么也不做
   }else{
-
-    let start ;
-    //如果原本的播放列表为空
-    if(sequenceList.length>0){
-      start=sequenceList.length-1;
-    }else{
-      start=0;
-    }
-    sequenceList.splice(start,0,song);
+    playList.push(song);
   }
   commit(types.set_playList,playList)
   commit(types.set_sequenceList,sequenceList)

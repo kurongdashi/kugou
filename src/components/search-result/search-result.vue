@@ -65,6 +65,7 @@
                 });
                 this.setSinger(singer)
               }else{
+                  console.log('zou--gequ')
                 this.insertSong(createSong(item));
               }
             this.$emit('selectItem')
@@ -86,7 +87,7 @@
           },
         handlePlayList(playlist){
           let bottom=playlist.length>0?'60px':'';
-//          this.$refs.resultList.$el.style.bottom=bottom;
+          this.$refs.resultList.$el.style.bottom=bottom;
 
         },
         _getResult(data){

@@ -664,3 +664,5 @@ this.currentLyric = new Lyric(lyric,(line)=>{
         }
       },
 ```
+### 插件 good-storage 优化localstorage操作
+[参考]()
