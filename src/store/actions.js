@@ -1,7 +1,7 @@
 import * as types from './mutation-type'
 import {playMode}from '../common/js/config'
 import {shuffle} from '../common/js/utils'
-import {saveCache,removeCache,clearCache} from '../common/js/cache'
+import {saveCache,removeCache,clearCache,savePlay} from '../common/js/cache'
 
 export const selectPlay=function ({commit,state},{list,index}) {
     commit(types.set_sequenceList,list);
@@ -116,6 +116,16 @@ export const removeSearchHistory=function ({commit},query) {
 export const clearSearchHistory=function ({commit},query) {
 
     commit(types.set_searchHistory,clearCache(query))
+
+}
+/**
+ * 保存播放历史
+ * @param commit
+ * @param query
+ */
+export const savePlayHistory=function ({commit},song) {
+
+    commit(types.set_playHistory,savePlay(song))
 
 }
 

@@ -5,9 +5,29 @@
 import storage from 'good-storage'
 //在storage中存储的key值
 const SEARCH_KEY='__search__';
+const PLAY_KEY='__play__';
+const PLAY_MAX_LENGTH=200;
 //最大存储多少个值
 const MAX_LENGTH=15;
 
+export function savePlay(song) {
+    let arr=storage.get(PLAY_KEY,[]);
+    insertArr(arr,val,(item)=>{
+        return item.id===song.id
+    },PLAY_MAX_LENGTH)
+    storage.set(PLAY_KEY,arr);
+    return arr;
+
+}
+export function loadPlay() {
+    let arr=storage.get(P,[]);
+    return arr;
+}
+/**
+ * 保存搜索历史
+ * @param val
+ * @returns {*}
+ */
 export function saveCache(val) {
   //获取之前的保存值
   let arr=storage.get(SEARCH_KEY,[]);
@@ -21,6 +41,12 @@ export function saveCache(val) {
   return arr;
 
 }
+
+/**
+ * 移除一个历史
+ * @param val
+ * @returns {*}
+ */
 export function removeCache(val) {
   //获取之前的保存值
   let arr=storage.get(SEARCH_KEY,[]);
@@ -33,6 +59,11 @@ export function removeCache(val) {
   return arr;
 
 }
+
+/**
+ * 清除所有搜索历史
+ * @returns {*}
+ */
 export function clearCache() {
   //获取之前的保存值
   let arr=storage.get(SEARCH_KEY,[]);
@@ -42,6 +73,7 @@ export function clearCache() {
   return arr;
 
 }
+
 function insertArr(arr,val,compare,maxLen) {
 
       let index=arr.findIndex(compare);
@@ -58,6 +90,7 @@ function insertArr(arr,val,compare,maxLen) {
         arr.pop();
       }
 }
+
 export function loadSearch() {
   let arr=storage.get(SEARCH_KEY,[]);
   return arr;

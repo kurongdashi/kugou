@@ -19,5 +19,7 @@ export const set_disc='set_disc';
 
 export const set_rankItem='set_rankItem';
 
-export const set_searchHistory='set_searchHistory'
+export const set_searchHistory='set_searchHistory';
+
+export const set_playHistory='set_playHistory';
 

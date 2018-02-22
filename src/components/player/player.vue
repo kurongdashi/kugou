@@ -87,7 +87,7 @@
 </template>
 
 <script type="text/ecmascript-6">
-  import {mapGetters, mapMutations} from 'vuex'
+  import {mapGetters, mapMutations,mapActions} from 'vuex'
 
   import anim from 'create-keyframe-animation'
   import {getSongUrl} from '../../common/js/Song'
@@ -265,6 +265,9 @@
       },
       canplay(){
         this.songReady = true;
+        //能播放后，要保存播放历史
+          this.savePlayHistory();
+
       },
       error(){
         this.songReady = true;
@@ -411,7 +414,11 @@
         setCurrentIndex: 'set_currentIndex',
         setMode: 'set_playMode',
         setPlayList: 'set_playList'
-      })
+      }),
+        ...mapActions({
+            savePlayHistory:'savePlayHistory',
+
+        })
     },
     watch: {
       //监听当前播放音乐数据，获取对应的播放url

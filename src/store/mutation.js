@@ -38,6 +38,9 @@ const mutation={
   [types.set_searchHistory](state,list){
     state.searchHistory=list;
   },
+  [types.set_playHistory](state,list){
+    state.playHistory=list;
+  }
 }
 
 export default  mutation
