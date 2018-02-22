@@ -53,10 +53,14 @@
       }
     },
     created(){
+        window.onresize=()=>{
+            console.log('页面刷新，待处理')
+        }
       this._getSlider();
       this._getSingList();
     },
     methods: {
+
       selectItem(item){
 //          console.log(item)
           this.$router.push({

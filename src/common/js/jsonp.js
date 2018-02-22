@@ -72,7 +72,7 @@ export function getSingList() {
     categoryId:10000000,
     sortId:5,
     sin:0,
-    ein:99,
+    ein:30,
   };
   return getData(url,data)
 

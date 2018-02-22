@@ -78,7 +78,9 @@
         </div>
       </div>
     </transition>
+
       <play-list ref="playList"></play-list>
+
     <audio :src="songUrl" ref="audio" @canplay="canplay" @error="error" @timeupdate="update" @ended="end"></audio>
 
   </div>
@@ -97,8 +99,10 @@
   import scroll from '../base/scroll/scroll'
   import {Transform} from '../../common/js/dom'
   import playList from '../play-list/play-list'
+  import {playerMixin} from '../../common/js/mixin'
 
   export default {
+      mixins:[playerMixin],
     data(){
       return {
         songUrl: '',
@@ -115,9 +119,6 @@
       this.touch={};
     },
     computed: {
-      modeIcon(){
-        return this.mode === playMode.sequence ? 'icon-sequence' : this.mode === playMode.loop ? 'icon-loop' : 'icon-random'
-      },
       percent(){
         let time = this.currentTime;
         let percent = time / this.currentSong.duration;
@@ -230,29 +231,6 @@
         if(this.currentLyric){
           this.currentLyric.seek(0);
         }
-      },
-      selectMode(){
-        let mode = (this.mode + 1) % 3;
-        this.setMode(mode);
-        let list = null;
-        if (this.tempList == null) {
-          this.tempList = this.sequenceList.slice();
-        }
-        if (mode === playMode.random) {
-          list = shuffle(this.sequenceList);
-        } else {
-          list = this.tempList;
-        }
-        this.resetCurrentIndex(list)
-        this.setPlayList(list);
-
-
-      },
-      resetCurrentIndex(list){
-        let index = list.findIndex((item) => {
-          return item.id === this.currentSong.id;
-        })
-        this.setCurrentIndex(index);
       },
       //拖动进度条
       onPercentChange(percent){
@@ -438,6 +416,11 @@
     watch: {
       //监听当前播放音乐数据，获取对应的播放url
       currentSong(newSong, oldSong){
+        // 播放列表中没有歌曲
+        if(!newSong.id){
+            return;
+        }
+        //播放歌曲不变
         if (newSong.id === oldSong.id) {
           return;
         }
@@ -506,13 +489,6 @@
   .player {
     .normal-enter, .normal-leave-to {
       opacity: 0;
-      /*transform: translate3d(0,100%,0);*/
-      .top {
-        transform: translate3d(0, -100%, 0);
-      }
-      .bottom {
-        transform: translate3d(0, 100%, 0);
-      }
     }
     .normal-enter-active, .normal-leave-active {
       transition: all .4s;
@@ -720,7 +696,7 @@
           position: absolute;
         }
         span {
-          margin: auto;
+          padding: 17px ;
           color: #ffff00;
           vertical-align: text-top;
           font-size: 26px;

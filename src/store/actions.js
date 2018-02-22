@@ -33,11 +33,6 @@ export const setRandomPlay=function ({commit,state},{list}) {
     commit(types.set_fullScreen,true);
     commit(types.set_playing,true);
 }
-function findIndex(list,song) {
-  return list.findIndex((item)=>{
-    return item.id==song.id;
-  })
-}
 
 export const insertSong=function ({commit,state},song) {
 
@@ -58,9 +53,9 @@ export const insertSong=function ({commit,state},song) {
   let fsIndex=findIndex(sequenceList,song);
 
   if(fsIndex>-1){
-    //什么也不做
+    //已经存在了，就不做操作
   }else{
-    playList.push(song);
+    sequenceList.push(song);
   }
   commit(types.set_playList,playList)
   commit(types.set_sequenceList,sequenceList)
@@ -70,18 +65,62 @@ export const insertSong=function ({commit,state},song) {
 
 }
 
+export const deleteSong=function ({commit,state},song) {
+  let playList=state.playList.slice();
+  let sequenceList=state.sequenceList.slice();
+  let currentIndex=state.currentIndex;
+  let indexp=findIndex(playList,song);
+  playList.splice(indexp,1);
+  let indexs=findIndex(sequenceList,song);
+  sequenceList.splice(indexs,1);
+
+  if(currentIndex>indexp || currentIndex===indexp){
+    // 删除的歌曲在当前播放歌曲前面，删除当前播放的
+      currentIndex--;
+  }
+
+  commit(types.set_playList,playList)
+  commit(types.set_sequenceList,sequenceList)
+  commit(types.set_currentIndex,currentIndex)
+  commit(types.set_fullScreen,true);
+  commit(types.set_playing,true);
+
+  if(!playList.length){
+    commit(types.set_playing,false);
+  }
+
+}
+
+export const deleteList=function ({commit}) {
+
+  commit(types.set_playList,[])
+  commit(types.set_sequenceList,[])
+  commit(types.set_currentIndex,-1)
+  commit(types.set_fullScreen,false);
+  commit(types.set_playing,false);
+
+}
+
 export const saveSearchHistory=function ({commit},query) {
 
     commit(types.set_searchHistory,saveCache(query))
 
 }
+
 export const removeSearchHistory=function ({commit},query) {
 
     commit(types.set_searchHistory,removeCache(query))
 
 }
+
 export const clearSearchHistory=function ({commit},query) {
 
     commit(types.set_searchHistory,clearCache(query))
 
+}
+
+function findIndex(list,song) {
+  return list.findIndex((item)=>{
+    return item.id==song.id;
+  })
 }
