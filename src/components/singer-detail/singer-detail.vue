@@ -45,6 +45,7 @@
             }
 
           api.getSingerDetail(this.singer.avatarId).then(res=>{
+//            console.log(res)
             let result=res.data;
             this.songs=this._normalSong(result.list);
 //            console.log( this.songs);

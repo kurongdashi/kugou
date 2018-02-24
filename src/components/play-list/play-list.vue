@@ -18,7 +18,7 @@
                 <span class="song-name">{{item.name}}</span>
               </div>
               <div class="right-box">
-                <span class="btn icon-favorite"></span>
+                <span class="btn" :class="getFavoIcon(item)" @click.stop="toggleFavorite(item)"></span>
                 <span class="btn icon-delete" @click.stop="deleteOne(item)"></span>
               </div>
             </li>

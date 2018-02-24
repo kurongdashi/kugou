@@ -51,7 +51,7 @@
             <span class="icon-prev" @click="prev"></span>
             <span :class="playIcon" @click="togglePlaying"></span>
             <span class="icon-next" @click="next"></span>
-            <span class="icon-favorite"></span>
+            <span :class="getFavoIcon(currentSong)" @click="toggleFavorite(currentSong)"></span>
           </div>
         </div>
         <div class="bg">
@@ -81,7 +81,7 @@
 
       <play-list ref="playList"></play-list>
 
-    <audio :src="songUrl" ref="audio" @canplay="canplay" @error="error" @timeupdate="update" @ended="end"></audio>
+    <audio :src="songUrl" ref="audio" @play="canplay" @error="error" @timeupdate="update" @ended="end"></audio>
 
   </div>
 </template>
@@ -102,7 +102,7 @@
   import {playerMixin} from '../../common/js/mixin'
 
   export default {
-      mixins:[playerMixin],
+    mixins:[playerMixin],
     data(){
       return {
         songUrl: '',
@@ -119,6 +119,7 @@
       this.touch={};
     },
     computed: {
+
       percent(){
         let time = this.currentTime;
         let percent = time / this.currentSong.duration;
@@ -140,7 +141,8 @@
         'playing',
         'currentIndex',
         'mode',
-        'sequenceList'
+        'sequenceList',
+        'favoriteList'
 
       ])
     },
@@ -266,7 +268,7 @@
       canplay(){
         this.songReady = true;
         //能播放后，要保存播放历史
-          this.savePlayHistory();
+          this.savePlayHistory(this.currentSong);
 
       },
       error(){
@@ -423,6 +425,7 @@
     watch: {
       //监听当前播放音乐数据，获取对应的播放url
       currentSong(newSong, oldSong){
+//          console.log(newSong)
         // 播放列表中没有歌曲
         if(!newSong.id){
             return;
@@ -442,6 +445,9 @@
             this.$refs.audio.play();
 
             newSong.getLyric(newSong.mid).then(lyric => {
+//                if(this.currentSong.lyric!==lyric){
+//                    return;
+//                }
 
               this.currentLyric = new Lyric(lyric,(line)=>{
                   //播放歌词回调函数
@@ -478,8 +484,10 @@
       },
       //通过vuex中playing状态，来真正控制播放、暂停
       playing(newPlaying){
-        setTimeout(() => {
+          clearTimeout(this.timer);
+        this.timer=setTimeout(()=>{
           let audio = this.$refs.audio;
+
           if (this.songReady) {
             newPlaying ? audio.play() : audio.pause();
           }

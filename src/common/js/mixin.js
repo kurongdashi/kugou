@@ -1,7 +1,7 @@
 /**
  * mixin的作用相当于父类，如果在引入的组件中没有覆盖，那就调用父类
  */
-import {mapGetters,mapMutations} from 'vuex'
+import {mapGetters,mapMutations,mapActions} from 'vuex'
 import {playMode} from './config'
 import {shuffle} from './utils'
 
@@ -42,11 +42,35 @@ export const playerMixin={
       'playing',
       'currentIndex',
       'mode',
-      'sequenceList'
+      'sequenceList',
+      'favoriteList'
 
     ])
   },
   methods:{
+    getFavoIcon(song){
+     if(this.isFavorite(song)){
+
+       return 'icon-favorite'
+     }
+     return 'icon-not-favorite';
+
+    },
+    isFavorite(song){
+
+      let index=this.favoriteList.findIndex((item)=>{
+        return item.id===song.id;
+      });
+      return index>-1;
+    },
+    toggleFavorite(song){
+        if(this.isFavorite(song)){
+          this.removeFavoriteList(song);
+        }else{
+          this.saveFavoriteList(song);
+        }
+
+    },
     selectMode(){
       let mode = (this.mode + 1) % 3;
       this.setMode(mode);
@@ -76,7 +100,26 @@ export const playerMixin={
       setPlaying: 'set_playing',
       setCurrentIndex: 'set_currentIndex',
       setMode: 'set_playMode',
-      setPlayList: 'set_playList'
+      setPlayList: 'set_playList',
+      setFavoriteList:'set_favoriteList'
+    }),
+    ...mapActions({
+      saveFavoriteList:'saveFavoriteList',
+      removeFavoriteList:'removeFavoriteList'
     })
+
+  }
+}
+
+export const searchMixin={
+  computed: {
+    ...mapGetters([
+      'searchHistory'
+    ])
+  },
+  methods:{
+    saveSearch(){
+      this.saveSearchHistory(this.query)
+    },
   }
 }

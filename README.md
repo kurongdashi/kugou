@@ -92,10 +92,15 @@ export default {
 ``` 
 handlePlayList(playlist){
           let bottom=playlist.length>0?'60px':'';
+          
           this.$refs.songsList.$el.style.bottom=bottom;
           this.$refs.songsList.refresh();
         },
 
+```
+4. 获取组件封装的内部元素dom ，.$el
+``` 
+  this.$refs.songsList.$el.style.bottom=bottom;
 ```
 
 
@@ -115,7 +120,7 @@ handlePlayList(playlist){
 dom数据加载完成后，必须调用scroll.refresh(),重新计算高度
 
 ``` 
-# 这层作为注入层 ,通过js代码注入,高度固定
+# 这层作为注入层 ,通过js代码注入,高度固定并且 overflow:hidden;
 
 <div ref='wrapper'>
   # 这层就是包裹list-item的,包裹层，上层通过计算这层的高度产生滚动
@@ -666,3 +671,9 @@ this.currentLyric = new Lyric(lyric,(line)=>{
 ```
 ### 插件 good-storage 优化localstorage操作
 [参考]()
+
+# 打包
+
+# 手机上调试，console，需要依赖vconsole 包
+在main.js入口文件中，引入vconsole
+

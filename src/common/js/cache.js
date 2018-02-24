@@ -7,12 +7,14 @@ import storage from 'good-storage'
 const SEARCH_KEY='__search__';
 const PLAY_KEY='__play__';
 const PLAY_MAX_LENGTH=200;
+const FAVO_KEY='__favorite__';
+const FAVO_MAX_LENGTH=100;
 //最大存储多少个值
 const MAX_LENGTH=15;
 
 export function savePlay(song) {
     let arr=storage.get(PLAY_KEY,[]);
-    insertArr(arr,val,(item)=>{
+    insertArr(arr,song,(item)=>{
         return item.id===song.id
     },PLAY_MAX_LENGTH)
     storage.set(PLAY_KEY,arr);
@@ -20,9 +22,36 @@ export function savePlay(song) {
 
 }
 export function loadPlay() {
-    let arr=storage.get(P,[]);
+    let arr=storage.get(PLAY_KEY,[]);
     return arr;
 }
+
+export function saveFavorite(song) {
+    let arr=storage.get(FAVO_KEY,[]);
+    insertArr(arr,song,(item)=>{
+        return item.id===song.id
+    },FAVO_MAX_LENGTH)
+    storage.set(FAVO_KEY,arr);
+    return arr;
+
+}
+export function loadFavorite() {
+    let arr=storage.get(FAVO_KEY,[]);
+    return arr;
+}
+export function removeFavorite(val) {
+  //获取之前的保存值
+  let arr=storage.get(FAVO_KEY,[]);
+  let index=arr.findIndex((item)=>{
+    return item===val;
+  });
+  arr.splice(index,1);
+  storage.set(FAVO_KEY,arr);
+
+  return arr;
+
+}
+
 /**
  * 保存搜索历史
  * @param val

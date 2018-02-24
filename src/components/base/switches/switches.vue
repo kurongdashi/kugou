@@ -15,7 +15,8 @@
         props:{
             switches:{
                 type:Array,
-                default:[]
+                default: []
+
             },
             defIndex:{
                 type:Number,
@@ -36,12 +37,12 @@
             width: 60%;
             border:1px solid #666;
             margin:auto;
-            border-radius: 10px;
             display: flex;
             .switch-item{
                 flex: 1;
                 padding:10px;
                 text-align: center;
+              color: #9c9c9c;
                 &.active{
                     background-color: #666;
                     color: #e0e0e0;

@@ -2,7 +2,7 @@
  * state 用于定义要传递或者要修改的数据对象
  */
 import {playMode} from '../common/js/config'
-import {loadSearch,loadPlay} from '../common/js/cache'
+import {loadSearch,loadPlay,loadFavorite} from '../common/js/cache'
 
  const state={
   singer:{},
@@ -22,5 +22,6 @@ import {loadSearch,loadPlay} from '../common/js/cache'
    rankItem:{},
    searchHistory:loadSearch(),
    playHistory:loadPlay(),
+   favoriteList:loadFavorite(),
 }
 export  default state;

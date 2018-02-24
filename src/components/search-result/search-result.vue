@@ -36,6 +36,10 @@
           query:{
               type:String,
               default:''
+          },
+          showSinger:{
+              type:Boolean,
+              default:true
           }
       },
       data(){
@@ -97,11 +101,17 @@
 
           this.hasMore=this._checkMore(song);
 
-          let zhida=data.zhida;
-          if(zhida.singerid){
-            zhida.type=SINGER;
-            ret.push(zhida);
+
+          if(this.showSinger){
+              //是否要显示搜索出来的歌手
+            let zhida=data.zhida;
+
+            if(zhida.singerid){
+              zhida.type=SINGER;
+              ret.push(zhida);
+            }
           }
+
           if(song.list.length>0){
               ret=ret.concat(song.list)
           }
@@ -132,6 +142,7 @@
       },
       watch:{
           query(newQuery){
+
             getSearchContent(this.query).then(res=>{
               let data=res.data.data;
 //              console.log(data)

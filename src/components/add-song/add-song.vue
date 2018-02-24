@@ -6,9 +6,12 @@
             <span class="icon-close btn" @click="hide"></span>
         </div>
         <div class="search-wrapper">
-            <search></search>
+            <search-box @query="search"></search-box>
         </div>
-        <div class="switches-wrapper">
+        <div class="result" v-show="query">
+            <!--<search-result :query="query" :showSinger="showSinger"></search-result>-->
+        </div>
+        <div class="switches-wrapper" v-show="!query">
             <switches :switches="switches" :defIndex="defIndex" @switch="switchChange"></switches>
         </div>
     </div>
@@ -17,14 +20,20 @@
 
 <script type="text/ecmascript-6">
   import sliderAnim from '../base/slider-anim/slider-anim'
-  import search from '../base/search-box/search-box'
+  import searchBox from '../base/search-box/search-box'
+  import searchResult from '../search-result/search-result'
   import Switches from '../base/switches/switches'
+  import {searchMixin} from '../../common/js/mixin'
     export default {
+//        mixins:[searchMixin],
         data(){
             return{
                 addSongFlag:false,
                 switches:['最近播放','播放历史'],
-                defIndex:0
+                defIndex:0,
+                query:'',
+                showSinger:false,
+
             }
         },
       methods:{
@@ -37,10 +46,14 @@
             },
             hide(){
                 this.addSongFlag=false;
-            }
+            },
+          search(query){
+                this.query=query;
+          }
+
       },
       components:{
-            sliderAnim,search,Switches
+            sliderAnim,searchBox,searchResult,Switches,
       }
     }
 </script>

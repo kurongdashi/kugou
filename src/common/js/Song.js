@@ -20,12 +20,25 @@ import {Base64} from 'js-base64'
   getAudioUrl(mid){
    return getSongUrl(mid)
   }
+
   //获取音乐歌词
   getLyric(mid){
     return getSingerLyric(mid).then(res=>{
       return Base64.decode(res.data.lyric);
     });
   }
+}
+export function objectToSong(object){
+    return new Song({
+    id:object.id,
+    mid:object.mid,
+    name:object.name,
+    singer:object.singer,
+    duration:object.duration,
+    album:object.album,
+    image:object.image,
+    url:''
+  })
 }
 export function createSong(musicData) {
 

@@ -107,9 +107,9 @@
           overflow: hidden;
           white-space: nowrap;
           text-overflow: ellipsis;
-          font-size: 14px;
+          font-size: 12px;
           line-height: 28px;
-          color: #e0e0cc;
+          color: #9c9c9c;
         }
       }
 

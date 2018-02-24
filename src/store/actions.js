@@ -1,7 +1,7 @@
 import * as types from './mutation-type'
 import {playMode}from '../common/js/config'
 import {shuffle} from '../common/js/utils'
-import {saveCache,removeCache,clearCache,savePlay} from '../common/js/cache'
+import {saveCache,removeCache,clearCache,savePlay,saveFavorite,removeFavorite} from '../common/js/cache'
 
 export const selectPlay=function ({commit,state},{list,index}) {
     commit(types.set_sequenceList,list);
@@ -128,6 +128,17 @@ export const savePlayHistory=function ({commit},song) {
     commit(types.set_playHistory,savePlay(song))
 
 }
+export const saveFavoriteList=function ({commit},song) {
+
+    commit(types.set_favoriteList,saveFavorite(song))
+
+}
+export const removeFavoriteList=function ({commit},song) {
+
+    commit(types.set_favoriteList,removeFavorite(song));
+
+}
+
 
 function findIndex(list,song) {
   return list.findIndex((item)=>{

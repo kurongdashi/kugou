@@ -23,7 +23,7 @@ export function getSingerDetail(mid) {
     singermid: mid,
     order: 'listen',
     begin: 0,
-    num: 100,
+    num: 10,
     songstatus: 1
   };
   let opt = {

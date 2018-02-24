@@ -23,3 +23,5 @@ export const set_searchHistory='set_searchHistory';
 
 export const set_playHistory='set_playHistory';
 
+export const set_favoriteList='set_favoriteList'
+
